@@ -1,0 +1,3016 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>HI-TEC MATCH PRO | 렉서스·토요타 색상매치 &amp; 조색 분석</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#0B0D10',
+            card: '#14181F',
+            surface: '#1B212B',
+            line: '#242B36',
+            cyanpro: '#00D2FF',
+            emeraldpro: '#10B981',
+            amberpro: '#F59E0B',
+            rosepro: '#F43F5E'
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans KR', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* 커스텀 스크롤바 및 터치 최적화 */
+    html, body {
+      background-color: #0B0D10;
+      color: #F3F4F6;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: none;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    #photoCanvas {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    /* 레인지 슬라이더 다크 스타일 */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #242B36;
+      height: 6px;
+      border-radius: 999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #00D2FF;
+      border: 2px solid #0B0D10;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.45);
+    }
+    /* 숫자 입력 화살표 숨김 */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+    /* 안전 영역 패딩 (아이폰 하단 바 대응) */
+    .pb-safe {
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.25rem);
+    }
+    .bottom-nav-safe {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+  </style>
+</head>
+<body class="bg-obsidian text-gray-100 font-sans min-h-screen antialiased selection:bg-cyanpro/30 selection:text-cyanpro">
+
+  <!-- 상단 고정 헤더 -->
+  <header class="sticky top-0 z-40 bg-obsidian/90 backdrop-blur-md border-b border-line">
+    <div class="max-w-4xl mx-auto px-3 sm:px-5 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyanpro/20 to-blue-600/20 border border-cyanpro/40 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-cyanpro" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white truncate">HI-TEC MATCH PRO</h1>
+            <span class="hidden sm:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-cyanpro/15 text-cyanpro border border-cyanpro/30">WT SERIES</span>
+          </div>
+          <p class="text-[11px] text-gray-400 truncate">Lexus · Toyota | Spies Hecker Permahyd Hi-TEC</p>
+        </div>
+      </div>
+
+      <!-- 현재 작업 차량 및 ΔE 요약 뱃지 -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="headerJobBadge" onclick="switchTab('recipe')" class="text-right px-2.5 py-1 rounded-xl bg-card border border-line hover:border-cyanpro/50 transition">
+          <div id="headerColorLabel" class="text-[11px] font-bold text-white leading-tight truncate max-w-[115px] sm:max-w-[180px]">LEXUS 1J7</div>
+          <div class="flex items-center justify-end gap-1 mt-0.5">
+            <span class="text-[10px] text-gray-400">45° ΔE00</span>
+            <span id="headerDeltaE" class="text-[11px] font-mono font-bold tabular-nums text-amberpro">0.00</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 콘텐츠 영역 -->
+  <main class="max-w-4xl mx-auto px-3 sm:px-5 pt-3 pb-safe space-y-4">
+
+    <!-- ========================================================= -->
+    <!-- TAB 1: 촬영/측색 (Capture & Colorimetry)                    -->
+    <!-- ========================================================= -->
+    <section id="tab-capture" class="tab-panel space-y-3.5">
+
+      <!-- 서브 모드 토글: 카메라 동시비교 vs 색측기 직접 입력 -->
+      <div class="bg-card border border-line rounded-2xl p-1.5 grid grid-cols-2 gap-1.5">
+        <button id="btnModePhoto" onclick="setMeasureMode('photo')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 bg-cyanpro/15 text-cyanpro border border-cyanpro/40">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>카메라/사진 비교</span>
+        </button>
+        <button id="btnModeSpectro" onclick="setMeasureMode('spectro')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 text-gray-400 hover:text-gray-200 border border-transparent">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h6M7 16h8"/></svg>
+          <span>색측기 수치 입력</span>
+        </button>
+      </div>
+
+      <!-- [MODE A] 카메라/사진 동시 비교 -->
+      <div id="panelModePhoto" class="space-y-3.5">
+
+        <!-- 촬영 방식 및 업로드 컨트롤 카드 -->
+        <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 bg-obsidian p-1 rounded-xl border border-line">
+              <button id="btnShotOne" onclick="setPhotoLayout('oneshot')" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-surface text-cyanpro border border-cyanpro/30 transition">
+                원샷 동시 비교 (권장)
+              </button>
+              <button id="btnShotMulti" onclick="setPhotoLayout('multi')" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-gray-400 hover:text-white transition">
+                각도별 개별 사진
+              </button>
+            </div>
+
+            <button onclick="loadSyntheticDemoImage()" class="px-3 py-1.5 rounded-xl bg-surface hover:bg-line text-[11px] font-semibold text-emeraldpro border border-emeraldpro/30 transition flex items-center gap-1">
+              <span>✨ 데모 시편 불러오기</span>
+            </button>
+          </div>
+
+          <!-- 각도별 개별 사진 선택 바 (multi 모드일 때만 표시) -->
+          <div id="multiAngleTabs" class="hidden grid grid-cols-3 gap-1.5 pt-1">
+            <button id="btnUploadAngle15" onclick="selectUploadAngle('15')" class="py-2 px-2 rounded-xl text-xs font-bold bg-cyanpro/15 text-cyanpro border border-cyanpro/40">
+              15° 하이라이트
+            </button>
+            <button id="btnUploadAngle45" onclick="selectUploadAngle('45')" class="py-2 px-2 rounded-xl text-xs font-bold bg-surface text-gray-400 border border-line">
+              45° 정면 (Face)
+            </button>
+            <button id="btnUploadAngle105" onclick="selectUploadAngle('105')" class="py-2 px-2 rounded-xl text-xs font-bold bg-surface text-gray-400 border border-line">
+              105° 측면 (Flop)
+            </button>
+          </div>
+
+          <!-- 카메라 촬영 / 앨범 업로드 버튼 -->
+          <div class="grid grid-cols-2 gap-2">
+            <label class="cursor-pointer py-3 px-3 rounded-xl bg-cyanpro text-obsidian font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.99] transition shadow-lg shadow-cyanpro/10">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span>카메라 바로 촬영</span>
+              <input id="inputCamera" type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event)" />
+            </label>
+            <label class="cursor-pointer py-3 px-3 rounded-xl bg-surface hover:bg-line text-white font-bold text-xs sm:text-sm border border-line flex items-center justify-center gap-2 active:scale-[0.99] transition">
+              <svg class="w-4 h-4 text-cyanpro" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+              <span>앨범 사진 업로드</span>
+              <input id="inputGallery" type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)" />
+            </label>
+          </div>
+
+          <!-- EXIF 및 노출 검증 바 -->
+          <div id="exifBar" class="rounded-xl bg-obsidian border border-line p-2.5 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] font-bold text-gray-300 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyanpro"></span>
+                EXIF &amp; 노출/화밸 검증
+              </span>
+              <span id="exifWarningBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emeraldpro/15 text-emeraldpro border border-emeraldpro/30">
+                검증 대기
+              </span>
+            </div>
+            <div id="exifMetaGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 text-[10px] font-mono tabular-nums">
+              <div class="bg-card px-2 py-1 rounded-lg border border-line/70"><span class="text-gray-500 block">기기</span><span id="exifDevice" class="text-gray-200 truncate block">데모 합성</span></div>
+              <div class="bg-card px-2 py-1 rounded-lg border border-line/70"><span class="text-gray-500 block">셔터</span><span id="exifShutter" class="text-gray-200">1/125s</span></div>
+              <div class="bg-card px-2 py-1 rounded-lg border border-line/70"><span class="text-gray-500 block">조리개</span><span id="exifAperture" class="text-gray-200">f/1.8</span></div>
+              <div class="bg-card px-2 py-1 rounded-lg border border-line/70"><span class="text-gray-500 block">ISO</span><span id="exifIso" class="text-gray-200">100</span></div>
+              <div class="bg-card px-2 py-1 rounded-lg border border-line/70"><span class="text-gray-500 block">화밸</span><span id="exifWb" class="text-gray-200">고정(D65)</span></div>
+              <div class="bg-card px-2 py-1 rounded-lg border border-line/70"><span class="text-gray-500 block">EV 보정</span><span id="exifEv" class="text-gray-200">0.0 EV</span></div>
+            </div>
+            <p id="exifAdviceText" class="text-[11px] text-gray-400 leading-relaxed">
+              차체 도장면 바로 옆에 시편을 붙여 한 장으로 동시 촬영하면 아이폰 자동 화밸(AWB)·Smart HDR 오차가 상쇄됩니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- 인터랙티브 캔버스 & ROI 핀 조작 카드 -->
+        <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xs sm:text-sm font-bold text-white">측색 포인트(ROI) 지정</h2>
+              <p class="text-[11px] text-gray-400">핀을 선택 후 화면을 터치하거나 드래그하세요.</p>
+            </div>
+            <!-- ROI 반경 슬라이더 -->
+            <div class="flex items-center gap-2 bg-obsidian px-2.5 py-1.5 rounded-xl border border-line">
+              <span class="text-[10px] font-semibold text-gray-400">측정 반경</span>
+              <input id="roiRadiusSlider" type="range" min="10" max="42" value="22" oninput="updateRoiRadius(this.value)" class="w-20 sm:w-24" />
+              <span id="roiRadiusValue" class="text-[11px] font-mono text-cyanpro w-8 text-right tabular-nums">22px</span>
+            </div>
+          </div>
+
+          <!-- 활성 핀 선택 버튼 그리드 -->
+          <div id="pinSelectorGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+            <!-- JS에서 동적 렌더링 -->
+          </div>
+
+          <!-- HTML5 인터랙티브 캔버스 래퍼 + 확대 루페 -->
+          <div class="relative rounded-xl overflow-hidden border border-line bg-black">
+            <canvas id="photoCanvas" class="w-full block cursor-crosshair"></canvas>
+            <!-- 확대 루페 오버레이 (터치/드래그 시 표시) -->
+            <div id="loupeContainer" class="hidden pointer-events-none absolute top-2.5 right-2.5 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-cyanpro shadow-2xl bg-black">
+              <canvas id="loupeCanvas" width="120" height="120" class="w-full h-full block"></canvas>
+              <div class="absolute bottom-0 inset-x-0 bg-black/75 text-[9px] font-mono text-center text-cyanpro py-0.5" id="loupeLabel">45° STD</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3존(15° / 45° / 105°) STD vs Sample 비교 스트립 패널 -->
+        <div class="bg-card border border-line rounded-2xl p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+              <span>3존 실측 크롭 비교 (15° / 45° / 105°)</span>
+            </h2>
+            <span class="text-[10px] font-mono text-gray-400">좌: STD(차체) | 우: Sample(작업면)</span>
+          </div>
+
+          <div class="rounded-xl overflow-hidden border border-line bg-obsidian">
+            <!-- 3행 비교 그리드 -->
+            <div class="divide-y divide-line">
+              <!-- 15도 -->
+              <div class="grid grid-cols-[54px_1fr_1fr] items-stretch">
+                <div class="bg-[#0F2744] flex flex-col items-center justify-center p-1.5 border-r border-line">
+                  <span class="text-xs font-mono font-extrabold text-white">15°</span>
+                  <span class="text-[9px] text-cyanpro/90">하이라이트</span>
+                  <span id="stripDe15" class="mt-1 text-[10px] font-mono font-bold tabular-nums text-amberpro">Δ0.0</span>
+                </div>
+                <div class="relative h-20 sm:h-24 border-r border-line bg-black">
+                  <canvas id="crop15Std" class="w-full h-full block"></canvas>
+                  <span id="stripLab15Std" class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-200 tabular-nums">L* --</span>
+                </div>
+                <div class="relative h-20 sm:h-24 bg-black">
+                  <canvas id="crop15Sample" class="w-full h-full block"></canvas>
+                  <span id="stripLab15Sample" class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-cyanpro tabular-nums">ΔL --</span>
+                </div>
+              </div>
+              <!-- 45도 -->
+              <div class="grid grid-cols-[54px_1fr_1fr] items-stretch">
+                <div class="bg-[#0F2744] flex flex-col items-center justify-center p-1.5 border-r border-line">
+                  <span class="text-xs font-mono font-extrabold text-white">45°</span>
+                  <span class="text-[9px] text-cyanpro/90">정면</span>
+                  <span id="stripDe45" class="mt-1 text-[10px] font-mono font-bold tabular-nums text-amberpro">Δ0.0</span>
+                </div>
+                <div class="relative h-20 sm:h-24 border-r border-line bg-black">
+                  <canvas id="crop45Std" class="w-full h-full block"></canvas>
+                  <span id="stripLab45Std" class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-200 tabular-nums">L* --</span>
+                </div>
+                <div class="relative h-20 sm:h-24 bg-black">
+                  <canvas id="crop45Sample" class="w-full h-full block"></canvas>
+                  <span id="stripLab45Sample" class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-cyanpro tabular-nums">ΔL --</span>
+                </div>
+              </div>
+              <!-- 105도 -->
+              <div class="grid grid-cols-[54px_1fr_1fr] items-stretch">
+                <div class="bg-[#0F2744] flex flex-col items-center justify-center p-1.5 border-r border-line">
+                  <span class="text-xs font-mono font-extrabold text-white">105°</span>
+                  <span class="text-[9px] text-cyanpro/90">측면 플롭</span>
+                  <span id="stripDe105" class="mt-1 text-[10px] font-mono font-bold tabular-nums text-amberpro">Δ0.0</span>
+                </div>
+                <div class="relative h-20 sm:h-24 border-r border-line bg-black">
+                  <canvas id="crop105Std" class="w-full h-full block"></canvas>
+                  <span id="stripLab105Std" class="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-gray-200 tabular-nums">L* --</span>
+                </div>
+                <div class="relative h-20 sm:h-24 bg-black">
+                  <canvas id="crop105Sample" class="w-full h-full block"></canvas>
+                  <span id="stripLab105Sample" class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-cyanpro tabular-nums">ΔL --</span>
+                </div>
+              </div>
+            </div>
+            <!-- 하단 라벨 바 -->
+            <div class="grid grid-cols-[54px_1fr_1fr] bg-[#0B1F3A] border-t border-line text-[11px] font-bold text-center text-white py-1.5">
+              <div class="border-r border-line/60 text-cyanpro">각도</div>
+              <div class="border-r border-line/60">STD (차체)</div>
+              <div>Sample (작업면)</div>
+            </div>
+          </div>
+
+          <!-- 스파클/플롭 요약 미니 지표 -->
+          <div class="grid grid-cols-3 gap-2 pt-1">
+            <div class="bg-obsidian border border-line rounded-xl p-2 text-center">
+              <div class="text-[10px] text-gray-400">차체 스파클 지수</div>
+              <div id="metricSparkleStd" class="text-xs font-mono font-bold text-white tabular-nums mt-0.5">--</div>
+            </div>
+            <div class="bg-obsidian border border-line rounded-xl p-2 text-center">
+              <div class="text-[10px] text-gray-400">시편 스파클 지수</div>
+              <div id="metricSparkleSample" class="text-xs font-mono font-bold text-cyanpro tabular-nums mt-0.5">--</div>
+            </div>
+            <div class="bg-obsidian border border-line rounded-xl p-2 text-center">
+              <div class="text-[10px] text-gray-400">플롭 지수 차이</div>
+              <div id="metricFlopDiff" class="text-xs font-mono font-bold text-amberpro tabular-nums mt-0.5">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [MODE B] 색측기 수치 직접 입력 -->
+      <div id="panelModeSpectro" class="hidden space-y-3.5">
+        <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xs sm:text-sm font-bold text-white">분광측색기 L*a*b*C* 직접 입력</h2>
+              <p class="text-[11px] text-gray-400">엑솔타 Acquire / 타사 다각도 측색기 값을 그대로 입력하세요.</p>
+            </div>
+          </div>
+
+          <!-- 빠른 현장 시나리오 불러오기 -->
+          <div class="space-y-1.5">
+            <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">현장 데모 시나리오 불러오기</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              <button onclick="loadSpectroScenario('1J7_bright')" class="text-left px-3 py-2 rounded-xl bg-surface hover:bg-line border border-line text-xs transition">
+                <div class="font-bold text-cyanpro">렉서스 1J7 소닉 티타늄</div>
+                <div class="text-[10px] text-gray-400">시편 밝음 + 측면 메탈릭 뜸 + 미세 쿨톤 부족</div>
+              </button>
+              <button onclick="loadSpectroScenario('070_yellow')" class="text-left px-3 py-2 rounded-xl bg-surface hover:bg-line border border-line text-xs transition">
+                <div class="font-bold text-amberpro">토요타 070 화이트 펄</div>
+                <div class="text-[10px] text-gray-400">시편 노란기 과다(+b*) + 정면 명도 높음</div>
+              </button>
+              <button onclick="loadSpectroScenario('223_dark')" class="text-left px-3 py-2 rounded-xl bg-surface hover:bg-line border border-line text-xs transition">
+                <div class="font-bold text-indigo-400">렉서스 223 그라파이트 블랙</div>
+                <div class="text-[10px] text-gray-400">시편 약간 어두움(-L*) + 청색 기여 낮음</div>
+              </button>
+              <button onclick="loadSpectroScenario('1G3_matte')" class="text-left px-3 py-2 rounded-xl bg-surface hover:bg-line border border-line text-xs transition">
+                <div class="font-bold text-emeraldpro">렉서스 1G3 마그네틱 그레이 (무광)</div>
+                <div class="text-[10px] text-gray-400">무광 클리어 미세 편차 (수정 보류 판정)</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 15° / 45° / 105° 수치 입력 테이블 -->
+          <div id="spectroInputsContainer" class="space-y-3 pt-1">
+            <!-- JS에서 3각도 카드 렌더링 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 다음 단계 이동 CTA -->
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="switchTab('recipe')" class="py-3 px-4 rounded-xl bg-surface hover:bg-line border border-line text-xs sm:text-sm font-bold text-white transition">
+          2단계: 배합표 확인 →
+        </button>
+        <button onclick="switchTab('report')" class="py-3 px-4 rounded-xl bg-gradient-to-r from-cyanpro to-blue-500 text-obsidian text-xs sm:text-sm font-extrabold hover:brightness-110 transition shadow-lg shadow-cyanpro/15">
+          바로 분석 리포트 보기 →
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 2: 배합표/토너 (Hi-TEC Recipe & WT Toner DB)           -->
+    <!-- ========================================================= -->
+    <section id="tab-recipe" class="tab-panel hidden space-y-3.5">
+
+      <!-- 차량 및 컬러코드 설정 카드 -->
+      <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs sm:text-sm font-bold text-white">차량 · 컬러코드 · 클리어 설정</h2>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-surface text-cyanpro border border-line">Permahyd Hi-TEC</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <!-- 제조사 -->
+          <div>
+            <label class="block text-[10px] font-semibold text-gray-400 mb-1">제조사</label>
+            <div class="grid grid-cols-2 gap-1 bg-obsidian p-1 rounded-xl border border-line">
+              <button id="btnBrandLexus" onclick="setBrand('LEXUS')" class="py-1.5 rounded-lg text-xs font-bold bg-cyanpro/20 text-cyanpro border border-cyanpro/40 transition">LEXUS</button>
+              <button id="btnBrandToyota" onclick="setBrand('TOYOTA')" class="py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition">TOYOTA</button>
+            </div>
+          </div>
+          <!-- 차종 -->
+          <div>
+            <label class="block text-[10px] font-semibold text-gray-400 mb-1">차종 (모델명)</label>
+            <input id="inputModel" type="text" value="ES300h" oninput="state.vehicle.model = this.value; updateHeaderBadge();" placeholder="예: ES300h, RX, 캠리" class="w-full bg-obsidian border border-line rounded-xl px-3 py-2 text-xs text-white focus:border-cyanpro outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <!-- 컬러코드 프리셋 -->
+          <div>
+            <label class="block text-[10px] font-semibold text-gray-400 mb-1">렉서스·토요타 컬러코드 프리셋</label>
+            <select id="selectColorPreset" onchange="applyColorPreset(this.value)" class="w-full bg-obsidian border border-line rounded-xl px-3 py-2 text-xs text-white focus:border-cyanpro outline-none">
+              <option value="1J7">1J7 - 소닉 티타늄 (Sonic Titanium)</option>
+              <option value="070">070 - 화이트 펄 크리스탈 샤인 (3코트)</option>
+              <option value="085">085 - 소닉 쿼츠 (3코트)</option>
+              <option value="1L1">1L1 - 소닉 이리듐 (Sonic Iridium)</option>
+              <option value="1G3">1G3 - 마그네틱 그레이 메탈릭</option>
+              <option value="212">212 - 옵시디언 블랙</option>
+              <option value="223">223 - 그라파이트 블랙 글래스 플레이크</option>
+              <option value="3R1">3R1 - 레드 마이카 크리스탈 샤인</option>
+              <option value="8X5">8X5 - 딥 블루 마이카</option>
+              <option value="CUSTOM">직접 입력 (커스텀 컬러)</option>
+            </select>
+          </div>
+          <!-- 마감 클리어 타입 -->
+          <div>
+            <label class="block text-[10px] font-semibold text-gray-400 mb-1">도장 마감 / 클리어 타입</label>
+            <select id="selectFinishType" onchange="state.vehicle.finish = this.value; renderReport();" class="w-full bg-obsidian border border-line rounded-xl px-3 py-2 text-xs text-white focus:border-cyanpro outline-none">
+              <option value="gloss">유광 클리어 (2코트 메탈릭/솔리드)</option>
+              <option value="pearl3">3코트 펄 (베이스 + 펄 미드코트)</option>
+              <option value="matte">무광 클리어 (Matte Clear)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 커스텀 컬러 입력 필드 (CUSTOM 선택 시 표시) -->
+        <div id="customColorFields" class="hidden grid grid-cols-2 gap-2">
+          <input id="inputCustomCode" type="text" placeholder="컬러코드 (예: 4Y5)" oninput="state.vehicle.colorCode = this.value.toUpperCase(); updateHeaderBadge();" class="bg-obsidian border border-line rounded-xl px-3 py-2 text-xs font-mono text-white focus:border-cyanpro outline-none" />
+          <input id="inputCustomName" type="text" placeholder="색상명 (예: 소닉 카퍼)" oninput="state.vehicle.colorName = this.value; updateHeaderBadge();" class="bg-obsidian border border-line rounded-xl px-3 py-2 text-xs text-white focus:border-cyanpro outline-none" />
+        </div>
+      </div>
+
+      <!-- 하이텍 배합표 에디터 카드 -->
+      <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-xs sm:text-sm font-bold text-white">Hi-TEC 기준 배합표 (WT 시리즈)</h2>
+            <p class="text-[11px] text-gray-400">실제 Phoenix 배합표 중량(g)을 입력하거나 수정하세요.</p>
+          </div>
+          <button onclick="openTonerModal()" class="px-3 py-1.5 rounded-xl bg-cyanpro/15 text-cyanpro border border-cyanpro/40 text-xs font-bold hover:bg-cyanpro/25 transition flex items-center gap-1">
+            <span>+ WT 토너 도감 / 추가</span>
+          </button>
+        </div>
+
+        <!-- 총량 스케일 변환 바 -->
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-obsidian p-2 rounded-xl border border-line">
+          <span class="text-[11px] font-semibold text-gray-400">배합 총량 환산:</span>
+          <div class="flex items-center gap-1.5">
+            <button onclick="scaleRecipe(100)" class="px-2.5 py-1 rounded-lg bg-surface hover:bg-line text-[11px] font-mono font-bold text-white border border-line">100g</button>
+            <button onclick="scaleRecipe(200)" class="px-2.5 py-1 rounded-lg bg-surface hover:bg-line text-[11px] font-mono font-bold text-white border border-line">200g</button>
+            <button onclick="scaleRecipe(300)" class="px-2.5 py-1 rounded-lg bg-surface hover:bg-line text-[11px] font-mono font-bold text-white border border-line">300g</button>
+            <button onclick="scaleRecipe(500)" class="px-2.5 py-1 rounded-lg bg-surface hover:bg-line text-[11px] font-mono font-bold text-white border border-line">500g</button>
+          </div>
+        </div>
+
+        <!-- 배합표 테이블 -->
+        <div class="overflow-x-auto rounded-xl border border-line bg-obsidian">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-line text-[10px] font-bold text-gray-400 bg-surface/60">
+                <th class="py-2 px-2.5">아이콘 / 토너</th>
+                <th class="py-2 px-2">색상명 (특성)</th>
+                <th class="py-2 px-2 text-right w-24">중량 (g)</th>
+                <th class="py-2 px-2 text-right w-14">비중</th>
+                <th class="py-2 px-1.5 w-8"></th>
+              </tr>
+            </thead>
+            <tbody id="recipeTableBody" class="divide-y divide-line/70 text-xs">
+              <!-- JS에서 동적 렌더링 -->
+            </tbody>
+            <tfoot id="recipeTableFooter" class="bg-surface/40 border-t border-line text-xs font-mono tabular-nums">
+              <!-- JS에서 합계 렌더링 -->
+            </tfoot>
+          </table>
+        </div>
+
+        <button onclick="switchTab('report')" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyanpro to-blue-500 text-obsidian text-xs sm:text-sm font-extrabold hover:brightness-110 transition shadow-lg shadow-cyanpro/15">
+          이 배합표로 조색 분석 리포트 생성 →
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 3: 분석 리포트 (Detailed Analysis & Modified Recipe)   -->
+    <!-- ========================================================= -->
+    <section id="tab-report" class="tab-panel hidden space-y-3.5">
+
+      <!-- 1. 측색 데이터 요약 카드 -->
+      <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-sm font-extrabold text-white flex items-center gap-1.5">
+            <span class="text-cyanpro">📊</span> 측색 데이터 요약 (L*a*b*C*)
+          </h2>
+          <!-- 각도 선택 탭 -->
+          <div class="flex items-center gap-1 bg-obsidian p-1 rounded-xl border border-line">
+            <button id="repAngle45" onclick="setReportAngle('45')" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-cyanpro/20 text-cyanpro">45°</button>
+            <button id="repAngle15" onclick="setReportAngle('15')" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold text-gray-400">15°</button>
+            <button id="repAngle105" onclick="setReportAngle('105')" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold text-gray-400">105°</button>
+          </div>
+        </div>
+
+        <!-- LabC 표 -->
+        <div class="rounded-xl overflow-hidden border border-line bg-obsidian">
+          <table class="w-full text-xs font-mono tabular-nums">
+            <thead>
+              <tr class="border-b border-line text-[11px] text-gray-400 bg-surface/60">
+                <th class="py-2 px-3 text-left font-sans">항목</th>
+                <th class="py-2 px-3 text-right font-sans">시편</th>
+                <th class="py-2 px-3 text-right font-sans">기준 (차체)</th>
+                <th class="py-2 px-3 text-right font-sans">시편 − 기준</th>
+              </tr>
+            </thead>
+            <tbody id="reportLabTableBody" class="divide-y divide-line/70">
+              <!-- JS 렌더링 -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 부호 안내 및 핵심 판정 박스 -->
+        <div class="bg-obsidian border border-line rounded-xl p-3 space-y-2.5">
+          <p id="reportSignSummary" class="text-xs text-gray-200 leading-relaxed font-medium"></p>
+          <p class="text-[11px] text-gray-400 leading-relaxed">
+            ※ 부호 안내: 위 표는 <strong class="text-white">시편 − 기준</strong> 방향입니다. 일부 측색기 상단 Δ값(<strong class="text-gray-300">기준 − 시편</strong>)과 부호가 반대이므로 조색 시 부호를 반드시 구분하세요.
+          </p>
+          <div class="pt-2 border-t border-line grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <div class="bg-card rounded-xl p-2.5 border border-line flex items-center justify-between sm:block">
+              <span class="text-[10px] text-gray-400 block">StructureMatch</span>
+              <span id="badgeStructureMatch" class="font-mono font-extrabold text-emeraldpro">--</span>
+            </div>
+            <div class="bg-card rounded-xl p-2.5 border border-line flex items-center justify-between sm:block">
+              <span class="text-[10px] text-gray-400 block">주요 문제 항목</span>
+              <span id="badgePrimaryIssue" class="font-mono font-extrabold text-amberpro">--</span>
+            </div>
+            <div class="bg-card rounded-xl p-2.5 border border-line flex items-center justify-between sm:block">
+              <span class="text-[10px] text-gray-400 block">TOP1 수정안</span>
+              <span id="badgeTop1Action" class="font-mono font-extrabold text-cyanpro">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 시편 vs 차체 비교 분석 카드 -->
+      <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+        <h2 class="text-sm font-extrabold text-white flex items-center gap-1.5">
+          <span class="text-emeraldpro">✅</span> 시편 vs 차체 비교 분석
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="bg-obsidian border border-line rounded-xl p-3 space-y-2">
+            <h3 class="text-xs font-extrabold text-cyanpro">1. 색상 톤(컬러 톤) 비교</h3>
+            <ul id="compareToneBullets" class="space-y-1.5 text-xs text-gray-200 leading-relaxed list-disc pl-4"></ul>
+          </div>
+          <div class="bg-obsidian border border-line rounded-xl p-3 space-y-2">
+            <h3 class="text-xs font-extrabold text-amberpro">2. 메탈릭 입자(펄, 알루미늄 플롭) 차이</h3>
+            <ul id="compareFlopBullets" class="space-y-1.5 text-xs text-gray-200 leading-relaxed list-disc pl-4"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ① 수정 레스피 카드 (인터랙티브 보정) -->
+      <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-extrabold text-white">① 수정 레스피 (실시간 미세조정)</h2>
+            <p class="text-[11px] text-gray-400">각 토너의 -/+ 버튼으로 보정 비율을 직접 미세조정할 수 있습니다.</p>
+          </div>
+          <button onclick="resetAutoAdjustments()" class="px-2.5 py-1 rounded-lg bg-surface hover:bg-line text-[11px] font-semibold text-cyanpro border border-line transition">
+            자동 제안 초기화
+          </button>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-line bg-obsidian">
+          <table class="w-full text-xs font-mono tabular-nums border-collapse">
+            <thead>
+              <tr class="border-b border-line text-[10px] text-gray-400 bg-surface/60 font-sans">
+                <th class="py-2 px-2.5 text-left">토너</th>
+                <th class="py-2 px-2 text-right">원본</th>
+                <th class="py-2 px-2 text-right">수정안</th>
+                <th class="py-2 px-2 text-right">변화</th>
+                <th class="py-2 px-2 text-center">미세조정</th>
+              </tr>
+            </thead>
+            <tbody id="modRecipeTableBody" class="divide-y divide-line/70">
+              <!-- JS 렌더링 -->
+            </tbody>
+            <tfoot id="modRecipeTableFooter" class="bg-surface/40 border-t border-line font-bold">
+              <!-- JS 렌더링 -->
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. ② 토너 특성 및 보정 근거 가이드 -->
+      <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+        <h2 class="text-sm font-extrabold text-white">② 토너 특성 및 보정 근거 가이드</h2>
+        <div id="rationaleCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <!-- JS 동적 생성 -->
+        </div>
+      </div>
+
+      <!-- 5. ③ 3존 예상 변화 테이블 -->
+      <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+        <h2 class="text-sm font-extrabold text-white">③ 3존 예상 변화</h2>
+        <div class="rounded-xl overflow-hidden border border-line bg-obsidian">
+          <table class="w-full text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-line text-[11px] text-gray-400 bg-surface/60">
+                <th class="py-2 px-3 text-left w-32">판독 영역</th>
+                <th class="py-2 px-3 text-left">수정 후 예상 변화</th>
+              </tr>
+            </thead>
+            <tbody id="threeZonePredictionBody" class="divide-y divide-line/70">
+              <!-- JS 렌더링 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 6. ④ Engineer Action (현장 판정 및 결론) -->
+      <div class="bg-card border border-cyanpro/35 rounded-2xl p-4 space-y-3 shadow-lg shadow-cyanpro/5">
+        <div class="flex items-center justify-between gap-2">
+          <h2 class="text-sm font-extrabold text-cyanpro">④ Engineer Action (현장 판정)</h2>
+          <span id="engineerStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amberpro/15 text-amberpro border border-amberpro/30">보정 권장</span>
+        </div>
+        <div id="engineerActionTitle" class="text-sm font-extrabold text-white leading-snug"></div>
+        <p id="engineerActionDetail" class="text-xs text-gray-300 leading-relaxed"></p>
+        <div class="bg-obsidian border border-line rounded-xl p-3">
+          <span class="text-[10px] font-bold text-cyanpro block mb-1">한 줄 결론</span>
+          <p id="engineerOneLiner" class="text-xs text-white font-medium leading-relaxed"></p>
+        </div>
+
+        <!-- 저장 및 복사 버튼 -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="saveCurrentSessionToArchive()" class="py-2.5 px-3 rounded-xl bg-emeraldpro text-obsidian font-extrabold text-xs hover:brightness-110 transition flex items-center justify-center gap-1.5">
+            <span>💾 작업 이력 저장</span>
+          </button>
+          <button onclick="copyReportText()" class="py-2.5 px-3 rounded-xl bg-surface hover:bg-line text-white font-bold text-xs border border-line transition flex items-center justify-center gap-1.5">
+            <span>📋 리포트 텍스트 복사</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 4: 작업 이력 (LocalStorage Archive)                    -->
+    <!-- ========================================================= -->
+    <section id="tab-archive" class="tab-panel hidden space-y-3.5">
+      <div class="bg-card border border-line rounded-2xl p-3.5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-extrabold text-white">조색 작업 이력 아카이브</h2>
+            <p class="text-[11px] text-gray-400">기기 브라우저(LocalStorage)에 안전하게 보관됩니다.</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="exportArchiveJson()" class="px-2.5 py-1.5 rounded-xl bg-surface hover:bg-line text-[11px] font-bold text-cyanpro border border-line transition">
+              JSON 내보내기
+            </button>
+            <label class="cursor-pointer px-2.5 py-1.5 rounded-xl bg-surface hover:bg-line text-[11px] font-bold text-gray-300 border border-line transition">
+              가져오기
+              <input type="file" accept="application/json" class="hidden" onchange="importArchiveJson(event)" />
+            </label>
+          </div>
+        </div>
+
+        <!-- 검색 필터 -->
+        <input id="archiveSearchInput" type="text" oninput="renderArchiveList()" placeholder="컬러코드(1J7, 070), 차종 또는 메모 검색..." class="w-full bg-obsidian border border-line rounded-xl px-3 py-2 text-xs text-white focus:border-cyanpro outline-none" />
+
+        <!-- 이력 리스트 -->
+        <div id="archiveListContainer" class="space-y-2.5">
+          <!-- JS 동적 렌더링 -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 하단 4탭 고정 내비게이션 -->
+  <nav class="fixed bottom-0 inset-x-0 z-40 bg-obsidian/95 backdrop-blur-md border-t border-line bottom-nav-safe">
+    <div class="max-w-4xl mx-auto grid grid-cols-4">
+      <button id="nav-capture" onclick="switchTab('capture')" class="nav-btn py-2.5 flex flex-col items-center justify-center gap-1 text-cyanpro">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span class="text-[10px] font-bold">촬영/측색</span>
+      </button>
+      <button id="nav-recipe" onclick="switchTab('recipe')" class="nav-btn py-2.5 flex flex-col items-center justify-center gap-1 text-gray-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3h6v4l4 10a2 2 0 0 1-1.8 2.8H6.8A2 2 0 0 1 5 17L9 7V3z"/><path d="M8 14h8"/></svg>
+        <span class="text-[10px] font-bold">배합표/토너</span>
+      </button>
+      <button id="nav-report" onclick="switchTab('report')" class="nav-btn py-2.5 flex flex-col items-center justify-center gap-1 text-gray-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        <span class="text-[10px] font-bold">분석 리포트</span>
+      </button>
+      <button id="nav-archive" onclick="switchTab('archive')" class="nav-btn py-2.5 flex flex-col items-center justify-center gap-1 text-gray-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2"/></svg>
+        <span class="text-[10px] font-bold">작업 이력</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- WT 토너 카탈로그 모달 -->
+  <div id="tonerModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-card border border-line w-full sm:max-w-2xl max-h-[88vh] rounded-t-3xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-4 py-3 border-b border-line flex items-center justify-between gap-2">
+        <div>
+          <h3 class="text-sm font-extrabold text-white">Permahyd Hi-TEC (WT 시리즈) 토너 도감</h3>
+          <p class="text-[11px] text-gray-400">토너를 터치하면 현재 배합표에 바로 추가됩니다.</p>
+        </div>
+        <button onclick="closeTonerModal()" class="w-8 h-8 rounded-xl bg-surface hover:bg-line text-gray-300 flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <!-- 검색 & 커스텀 WT 추가 -->
+      <div class="p-3 border-b border-line bg-obsidian/70 space-y-2">
+        <input id="tonerSearchInput" type="text" oninput="renderTonerCatalog()" placeholder="WT 코드 또는 색상명 검색 (예: WT320, Silver, Pearl, Black)..." class="w-full bg-card border border-line rounded-xl px-3 py-2 text-xs text-white focus:border-cyanpro outline-none" />
+        <div class="flex gap-1.5">
+          <input id="customTonerCode" type="text" placeholder="직접 추가 코드 (예: WT389)" class="w-32 bg-card border border-line rounded-xl px-2.5 py-1.5 text-xs font-mono text-white outline-none focus:border-cyanpro" />
+          <input id="customTonerName" type="text" placeholder="토너명 입력" class="flex-1 bg-card border border-line rounded-xl px-2.5 py-1.5 text-xs text-white outline-none focus:border-cyanpro" />
+          <button onclick="addCustomTonerToRecipe()" class="px-3 py-1.5 rounded-xl bg-cyanpro text-obsidian text-xs font-extrabold shrink-0">추가</button>
+        </div>
+      </div>
+
+      <!-- 카탈로그 리스트 -->
+      <div class="overflow-y-auto p-2 flex-1">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="text-[10px] text-gray-400 border-b border-line">
+              <th class="py-1.5 px-2 w-16">아이콘</th>
+              <th class="py-1.5 px-2 w-16">토너</th>
+              <th class="py-1.5 px-2">색상명 / 조색 특성</th>
+              <th class="py-1.5 px-2 text-right w-14">추가</th>
+            </tr>
+          </thead>
+          <tbody id="tonerCatalogBody" class="divide-y divide-line/60 text-xs">
+            <!-- JS 동적 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 커스텀 확인 모달 (confirm() 대체) -->
+  <div id="confirmModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-card border border-line rounded-2xl max-w-xs w-full p-4 space-y-3 shadow-2xl">
+      <h3 id="confirmModalTitle" class="text-sm font-extrabold text-white">확인</h3>
+      <p id="confirmModalMessage" class="text-xs text-gray-300 leading-relaxed"></p>
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="closeConfirmModal()" class="py-2 rounded-xl bg-surface hover:bg-line text-xs font-bold text-gray-300">취소</button>
+        <button id="confirmModalOkBtn" class="py-2 rounded-xl bg-rosepro text-white text-xs font-extrabold">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 알림 컨테이너 (alert() 대체) -->
+  <div id="toastContainer" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 pointer-events-none space-y-2 w-[90%] max-w-sm"></div>
+
+  <!-- ======================================================================= -->
+  <!-- JAVASCRIPT: 색과학 엔진 + EXIF 파서 + 하이텍 조색 알고리즘 + UI 컨트롤러 -->
+  <!-- ======================================================================= -->
+  <script>
+    'use strict';
+
+    /* =====================================================================
+       1. 스피스해커 퍼마하이드 하이텍 (WT 시리즈) 토너 마스터 데이터베이스
+       ===================================================================== */
+    const WT_TONER_DB = [
+      { code: 'WT300', name: 'Mixing Clear / Binder', kr: '믹싱 클리어 (바인더/수지)', type: 'binder', hex: '#D1D5DB', sparkle: 0, desc: '수용성 베이스 바인더 수지 · 배합 골격 유지' },
+      { code: 'WT310', name: 'Flop Control Additive', kr: '플롭 조절 첨가제', type: 'additive', hex: '#94A3B8', sparkle: 0, desc: '메탈릭 배향 안정화 · 측면(105°) 플롭 과다 밝기 억제' },
+      { code: 'WT301', name: 'High Strength White', kr: '고은폐 화이트', type: 'white', hex: '#F8FAFC', sparkle: 0, desc: '강한 백색 산란 · 명도 상승 및 은폐력 핵심 기여' },
+      { code: 'WT303', name: 'Low Strength White', kr: '저은폐 미조색 화이트', type: 'white', hex: '#E2E8F0', sparkle: 0, desc: '미세한 명도 상승 및 은폐력 변화 최소화 보정용' },
+      { code: 'WT305', name: 'Jet Black', kr: '제트 블랙', type: 'black', hex: '#111827', sparkle: 0, desc: '강한 심흑도 · 정면/측면 전체 명도 하강' },
+      { code: 'WT306', name: 'Deep Black', kr: '딥 블랙', type: 'black', hex: '#1F2937', sparkle: 0, desc: '깊은 검정 · 미세 명도 하강 및 황변 억제' },
+      { code: 'WT307', name: 'Blue-Tone Black', kr: '블루톤 블랙', type: 'black', hex: '#1E293B', sparkle: 0, desc: '청색 기운 블랙 · 명도 하강 + 쿨톤 보정' },
+      { code: 'WT320', name: 'Extra Fine Silver', kr: '초소형 메탈릭', type: 'metallic', hex: '#CBD5E1', sparkle: 1, desc: '정면을 어둡게, 측면(105°)을 밝게 · 과다 시 메탈릭 뜸 현상' },
+      { code: 'WT321', name: 'Fine Bright Silver', kr: '미세 브라이트 실버', type: 'metallic', hex: '#DCE3EC', sparkle: 2, desc: '균일하고 고운 광택 · 측면 밝기와 부드러운 플롭 형성' },
+      { code: 'WT322', name: 'Medium Silver Dollar', kr: '중입자 실버 달러', type: 'metallic', hex: '#E5E7EB', sparkle: 2, desc: '선명한 정면 반사 · 렉서스 소닉 계열 핵심 알루미늄' },
+      { code: 'WT324', name: 'Large Sparkle Silver', kr: '대입자 스파클 실버', type: 'metallic', hex: '#F1F5F9', sparkle: 3, desc: '정면(15°) 스파클 강하게 튐 · 과다 시 표면 거칠고 반짝임 과다' },
+      { code: 'WT326', name: 'Bright Coarse Silver', kr: '고휘도 대입자 실버', type: 'metallic', hex: '#FFFFFF', sparkle: 3, desc: '강력한 하이라이트 반사 및 거친 메탈릭 입자감' },
+      { code: 'WT370', name: 'Fine White Pearl', kr: '미세 화이트 펄', type: 'pearl', hex: '#F8FAFC', sparkle: 1, desc: '토요타 070/085 3코트 핵심 · 부드러운 진주 광택' },
+      { code: 'WT371', name: 'Satin White Pearl', kr: '새틴 화이트 펄', type: 'pearl', hex: '#FEFCE8', sparkle: 2, desc: '중간 입자 화이트 펄 · 햇빛 정면 반짝임 강화' },
+      { code: 'WT375', name: 'Fine Blue Pearl', kr: '미세 블루 펄', type: 'pearl', hex: '#38BDF8', sparkle: 1, desc: '정면 쿨 블루 반사 · 다크그레이/블랙 청색 깊이 부여' },
+      { code: 'WT378', name: 'Glass Flake / Xirallic Pearl', kr: '글래스 플레이크 펄', type: 'pearl', hex: '#E0F2FE', sparkle: 3, desc: '렉서스 223/085 특유의 고휘도 보석 입자 반짝임' },
+      { code: 'WT330', name: 'Blue', kr: '블루', type: 'tint', hex: '#2563EB', sparkle: 0, desc: '청색기 보강 (-b*) · 노란기 억제 및 쿨톤 전환' },
+      { code: 'WT334', name: 'Transparent Light Blue', kr: '투명 라이트 블루', type: 'tint', hex: '#38BDF8', sparkle: 0, desc: '메탈릭 투명감 유지하며 맑은 청색기 부여' },
+      { code: 'WT337', name: 'Bluish Violet', kr: '블루이시 바이올렛', type: 'tint', hex: '#8B5CF6', sparkle: 0, desc: '미세한 쿨톤 보정 · 노란기 중화 및 세련된 회색 톤' },
+      { code: 'WT342', name: 'Yellowish Green', kr: '황녹색 (옐로우 그린)', type: 'tint', hex: '#65A30D', sparkle: 0, desc: '붉은기 억제(-a*) 및 미세 황녹색감 조정' },
+      { code: 'WT350', name: 'Oxide Yellow', kr: '옥사이드 옐로우', type: 'tint', hex: '#CA8A04', sparkle: 0, desc: '따뜻한 황색기(+b*) · 웜톤 및 은폐 보조' },
+      { code: 'WT354', name: 'Bright Yellow', kr: '브라이트 옐로우', type: 'tint', hex: '#FACC15', sparkle: 0, desc: '선명한 노란기 보강 (+b*)' },
+      { code: 'WT360', name: 'Red', kr: '레드', type: 'tint', hex: '#DC2626', sparkle: 0, desc: '적색기 보강 (+a*) · 녹색기 억제' },
+      { code: 'WT363', name: 'Transparent Red', kr: '투명 레드', type: 'tint', hex: '#EF4444', sparkle: 0, desc: '3R1 등 레드 마이카 깊이와 채도 보강' },
+      { code: 'WT367', name: 'Dark Brown', kr: '다크 브라운', type: 'tint', hex: '#7C2D12', sparkle: 0, desc: '따뜻한 어두움 · 그레이/티타늄 웜톤 깊이 조절' }
+    ];
+
+    function getTonerInfo(code) {
+      const found = WT_TONER_DB.find(t => t.code === code);
+      if (found) return found;
+      return { code, name: 'Custom WT Toner', kr: '사용자 지정 토너', type: 'tint', hex: '#64748B', sparkle: 0, desc: '직접 추가된 커스텀 토너' };
+    }
+
+    /* =====================================================================
+       2. 렉서스 · 토요타 대표 컬러코드별 Hi-TEC 프리셋 배합표 (100g 기준)
+       ===================================================================== */
+    const COLOR_PRESETS = {
+      '1J7': {
+        brand: 'LEXUS', model: 'ES300h', code: '1J7', name: '소닉 티타늄 (Sonic Titanium)', finish: 'gloss',
+        recipe: [
+          { code: 'WT322', grams: 24.850 },
+          { code: 'WT320', grams: 14.200 },
+          { code: 'WT324', grams: 7.450 },
+          { code: 'WT306', grams: 6.120 },
+          { code: 'WT334', grams: 1.840 },
+          { code: 'WT337', grams: 0.620 },
+          { code: 'WT367', grams: 0.480 },
+          { code: 'WT310', grams: 1.200 },
+          { code: 'WT300', grams: 43.240 }
+        ]
+      },
+      '070': {
+        brand: 'TOYOTA', model: 'Camry / RAV4', code: '070', name: '화이트 펄 크리스탈 샤인 (3코트)', finish: 'pearl3',
+        recipe: [
+          { code: 'WT301', grams: 38.600 },
+          { code: 'WT303', grams: 5.200 },
+          { code: 'WT370', grams: 6.800 },
+          { code: 'WT350', grams: 0.920 },
+          { code: 'WT306', grams: 0.240 },
+          { code: 'WT337', grams: 0.140 },
+          { code: 'WT300', grams: 48.100 }
+        ]
+      },
+      '085': {
+        brand: 'LEXUS', model: 'NX350h', code: '085', name: '소닉 쿼츠 (3코트)', finish: 'pearl3',
+        recipe: [
+          { code: 'WT301', grams: 40.200 },
+          { code: 'WT370', grams: 5.400 },
+          { code: 'WT378', grams: 3.150 },
+          { code: 'WT334', grams: 0.350 },
+          { code: 'WT350', grams: 0.280 },
+          { code: 'WT300', grams: 50.620 }
+        ]
+      },
+      '1L1': {
+        brand: 'LEXUS', model: 'RX350h', code: '1L1', name: '소닉 이리듐 (Sonic Iridium)', finish: 'gloss',
+        recipe: [
+          { code: 'WT321', grams: 22.400 },
+          { code: 'WT320', grams: 16.500 },
+          { code: 'WT324', grams: 5.800 },
+          { code: 'WT307', grams: 3.450 },
+          { code: 'WT334', grams: 1.150 },
+          { code: 'WT310', grams: 1.500 },
+          { code: 'WT300', grams: 49.200 }
+        ]
+      },
+      '1G3': {
+        brand: 'LEXUS', model: 'IS300', code: '1G3', name: '마그네틱 그레이 메탈릭', finish: 'gloss',
+        recipe: [
+          { code: 'WT306', grams: 18.400 },
+          { code: 'WT320', grams: 12.600 },
+          { code: 'WT324', grams: 6.200 },
+          { code: 'WT375', grams: 2.350 },
+          { code: 'WT334', grams: 2.100 },
+          { code: 'WT337', grams: 0.850 },
+          { code: 'WT303', grams: 1.400 },
+          { code: 'WT300', grams: 56.100 }
+        ]
+      },
+      '212': {
+        brand: 'LEXUS', model: 'LS500h', code: '212', name: '옵시디언 블랙 (솔리드)', finish: 'gloss',
+        recipe: [
+          { code: 'WT305', grams: 31.500 },
+          { code: 'WT307', grams: 8.200 },
+          { code: 'WT337', grams: 1.100 },
+          { code: 'WT300', grams: 59.200 }
+        ]
+      },
+      '223': {
+        brand: 'LEXUS', model: 'ES300h', code: '223', name: '그라파이트 블랙 글래스 플레이크', finish: 'gloss',
+        recipe: [
+          { code: 'WT305', grams: 26.400 },
+          { code: 'WT307', grams: 9.800 },
+          { code: 'WT378', grams: 4.600 },
+          { code: 'WT375', grams: 2.100 },
+          { code: 'WT337', grams: 1.250 },
+          { code: 'WT320', grams: 1.850 },
+          { code: 'WT300', grams: 54.000 }
+        ]
+      },
+      '3R1': {
+        brand: 'LEXUS', model: 'UX250h', code: '3R1', name: '레드 마이카 크리스탈 샤인', finish: 'gloss',
+        recipe: [
+          { code: 'WT363', grams: 22.800 },
+          { code: 'WT360', grams: 11.400 },
+          { code: 'WT371', grams: 4.200 },
+          { code: 'WT320', grams: 3.100 },
+          { code: 'WT306', grams: 2.400 },
+          { code: 'WT367', grams: 1.800 },
+          { code: 'WT300', grams: 54.300 }
+        ]
+      },
+      '8X5': {
+        brand: 'LEXUS', model: 'RX500h', code: '8X5', name: '딥 블루 마이카', finish: 'gloss',
+        recipe: [
+          { code: 'WT330', grams: 21.500 },
+          { code: 'WT334', grams: 8.400 },
+          { code: 'WT375', grams: 5.900 },
+          { code: 'WT307', grams: 7.200 },
+          { code: 'WT337', grams: 2.100 },
+          { code: 'WT300', grams: 54.900 }
+        ]
+      }
+    };
+
+    /* =====================================================================
+       3. 전역 애플리케이션 상태 (State)
+       ===================================================================== */
+    const ARCHIVE_KEY = 'hitec_match_pro_archive_v1';
+
+    const state = {
+      activeTab: 'capture',
+      measureMode: 'photo', // 'photo' | 'spectro'
+      photoLayout: 'oneshot', // 'oneshot' | 'multi'
+      activeUploadAngle: '45', // multi 모드에서 현재 보고 있는 각도 이미지
+      reportAngle: '45',
+      roiRadius: 22,
+      activePinKey: '45_std',
+      isDraggingPin: false,
+
+      // 이미지 저장소 (oneshot은 'oneshot' 키 사용, multi는 '15','45','105' 사용)
+      images: {
+        oneshot: null,
+        '15': null,
+        '45': null,
+        '105': null
+      },
+
+      // 정규화 좌표 (0~1) 기준 핀 위치
+      pins: {
+        '15_std':    { x: 0.34, y: 0.22, angle: '15',  role: 'std',    label: '15° STD',  color: '#38BDF8' },
+        '15_sample': { x: 0.66, y: 0.22, angle: '15',  role: 'sample', label: '15° 시편', color: '#F59E0B' },
+        '45_std':    { x: 0.34, y: 0.50, angle: '45',  role: 'std',    label: '45° STD',  color: '#00D2FF' },
+        '45_sample': { x: 0.66, y: 0.50, angle: '45',  role: 'sample', label: '45° 시편', color: '#FB923C' },
+        '105_std':   { x: 0.34, y: 0.78, angle: '105', role: 'std',    label: '105° STD', color: '#60A5FA' },
+        '105_sample':{ x: 0.66, y: 0.78, angle: '105', role: 'sample', label: '105° 시편',color: '#F43F5E' }
+      },
+
+      // EXIF 파싱 결과
+      exif: {
+        device: '데모 합성 이미지',
+        shutter: '1/125s',
+        aperture: 'f/1.8',
+        iso: '100',
+        wb: '고정(D65)',
+        ev: '0.0 EV',
+        rawWbCode: 1,
+        isDemo: true
+      },
+
+      // 측색 데이터 (카메라 추출 또는 색측기 입력 공용)
+      measurements: {
+        '15':  { std: { L: 69.20, a: -0.60, b: -1.80, sparkle: 5.4, clipHigh: false, clipLow: false }, sample: { L: 71.15, a: -0.42, b: -1.05, sparkle: 6.7, clipHigh: false, clipLow: false } },
+        '45':  { std: { L: 54.40, a: -0.52, b: -2.10, sparkle: 4.1, clipHigh: false, clipLow: false }, sample: { L: 56.05, a: -0.35, b: -1.32, sparkle: 4.9, clipHigh: false, clipLow: false } },
+        '105': { std: { L: 37.80, a: -0.40, b: -1.95, sparkle: 2.3, clipHigh: false, clipLow: false }, sample: { L: 39.75, a: -0.28, b: -1.30, sparkle: 3.1, clipHigh: false, clipLow: false } }
+      },
+
+      // 차량 및 배합표 상태
+      vehicle: {
+        brand: 'LEXUS',
+        model: 'ES300h',
+        colorCode: '1J7',
+        colorName: '소닉 티타늄 (Sonic Titanium)',
+        finish: 'gloss'
+      },
+      recipe: [],
+
+      // 분석 리포트에서 사용자가 수동 미세조정한 보정률/추가그램 오버라이드
+      // 구조: { [code]: { pctDelta: number, addGrams: number, isSuggestedAddition?: boolean } }
+      adjustments: {},
+      lastAutoSignature: ''
+    };
+
+    /* =====================================================================
+       4. 색과학 수학 엔진 (sRGB -> Linear -> XYZ D65 -> CIELAB -> CIEDE2000)
+       ===================================================================== */
+    function srgbToLinear(c255) {
+      const c = c255 / 255;
+      return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    }
+
+    function rgbToLab(r, g, b) {
+      const rl = srgbToLinear(r);
+      const gl = srgbToLinear(g);
+      const bl = srgbToLinear(b);
+
+      // sRGB -> CIE XYZ (D65 2°)
+      const x = (rl * 0.4124564 + gl * 0.3575761 + bl * 0.1804375) / 0.95047;
+      const y = (rl * 0.2126729 + gl * 0.7151522 + bl * 0.0721750) / 1.00000;
+      const z = (rl * 0.0193339 + gl * 0.1191920 + bl * 0.9503041) / 1.08883;
+
+      const f = (t) => (t > 0.0088564516 ? Math.cbrt(t) : (7.787037 * t) + 16 / 116);
+      const fx = f(x);
+      const fy = f(y);
+      const fz = f(z);
+
+      const L = (116 * fy) - 16;
+      const a = 500 * (fx - fy);
+      const bVal = 200 * (fy - fz);
+      const C = Math.sqrt(a * a + bVal * bVal);
+      let h = Math.atan2(bVal, a) * (180 / Math.PI);
+      if (h < 0) h += 360;
+
+      return { L, a, b: bVal, C, h };
+    }
+
+    function calcChroma(a, b) {
+      return Math.sqrt(a * a + b * b);
+    }
+
+    /**
+     * CIEDE2000 (ΔE00) 공식 (Sharma, Wu, Dalal 2005)
+     */
+    function ciede2000(lab1, lab2) {
+      const L1 = lab1.L, a1 = lab1.a, b1 = lab1.b;
+      const L2 = lab2.L, a2 = lab2.a, b2 = lab2.b;
+
+      const deg2rad = Math.PI / 180;
+      const rad2deg = 180 / Math.PI;
+
+      const C1 = Math.sqrt(a1 * a1 + b1 * b1);
+      const C2 = Math.sqrt(a2 * a2 + b2 * b2);
+      const Cbar = (C1 + C2) / 2;
+      const Cbar7 = Math.pow(Cbar, 7);
+      const G = 0.5 * (1 - Math.sqrt(Cbar7 / (Cbar7 + Math.pow(25, 7))));
+
+      const a1p = (1 + G) * a1;
+      const a2p = (1 + G) * a2;
+      const C1p = Math.sqrt(a1p * a1p + b1 * b1);
+      const C2p = Math.sqrt(a2p * a2p + b2 * b2);
+
+      const h1p = (C1p === 0) ? 0 : (Math.atan2(b1, a1p) * rad2deg + 360) % 360;
+      const h2p = (C2p === 0) ? 0 : (Math.atan2(b2, a2p) * rad2deg + 360) % 360;
+
+      const dLp = L2 - L1;
+      const dCp = C2p - C1p;
+
+      let dhp = 0;
+      if (C1p * C2p !== 0) {
+        const diff = h2p - h1p;
+        if (Math.abs(diff) <= 180) dhp = diff;
+        else if (diff > 180) dhp = diff - 360;
+        else dhp = diff + 360;
+      }
+      const dHp = 2 * Math.sqrt(C1p * C2p) * Math.sin((dhp / 2) * deg2rad);
+
+      const Lbarp = (L1 + L2) / 2;
+      const Cbarp = (C1p + C2p) / 2;
+
+      let hbarp = h1p + h2p;
+      if (C1p * C2p !== 0) {
+        if (Math.abs(h1p - h2p) <= 180) hbarp = (h1p + h2p) / 2;
+        else if ((h1p + h2p) < 360) hbarp = (h1p + h2p + 360) / 2;
+        else hbarp = (h1p + h2p - 360) / 2;
+      }
+
+      const T = 1
+        - 0.17 * Math.cos((hbarp - 30) * deg2rad)
+        + 0.24 * Math.cos((2 * hbarp) * deg2rad)
+        + 0.32 * Math.cos((3 * hbarp + 6) * deg2rad)
+        - 0.20 * Math.cos((4 * hbarp - 63) * deg2rad);
+
+      const dTheta = 30 * Math.exp(-Math.pow((hbarp - 275) / 25, 2));
+      const Cbarp7 = Math.pow(Cbarp, 7);
+      const Rc = 2 * Math.sqrt(Cbarp7 / (Cbarp7 + Math.pow(25, 7)));
+
+      const Lbarp50sq = Math.pow(Lbarp - 50, 2);
+      const SL = 1 + (0.015 * Lbarp50sq) / Math.sqrt(20 + Lbarp50sq);
+      const SC = 1 + 0.045 * Cbarp;
+      const SH = 1 + 0.015 * Cbarp * T;
+      const RT = -Math.sin(2 * dTheta * deg2rad) * Rc;
+
+      const termL = dLp / SL;
+      const termC = dCp / SC;
+      const termH = dHp / SH;
+
+      return Math.sqrt(termL * termL + termC * termC + termH * termH + RT * termC * termH);
+    }
+
+    /**
+     * 플롭 지수 (Axalta / DuPont 표준식)
+     */
+    function calcFlopIndex(L15, L45, L105) {
+      const diff = Math.max(0.1, L15 - L105);
+      const denom = Math.pow(Math.max(10, L45), 0.86);
+      return (2.69 * Math.pow(diff, 1.11)) / denom;
+    }
+
+    function formatSigned(num, digits = 2) {
+      const n = Number(num) || 0;
+      const fixed = Math.abs(n).toFixed(digits);
+      if (Math.abs(n) < Math.pow(10, -digits) / 2) return '0.' + '0'.repeat(digits);
+      return (n > 0 ? '+' : '−') + fixed;
+    }
+
+    /* =====================================================================
+       5. 순수 자바스크립트 JPEG EXIF 바이너리 파서
+       ===================================================================== */
+    function parseExifFromArrayBuffer(buffer) {
+      const result = {
+        device: '정보 없음',
+        shutter: '--',
+        aperture: '--',
+        iso: '--',
+        wb: '확인 불가',
+        ev: '--',
+        rawWbCode: null,
+        isDemo: false
+      };
+
+      try {
+        const view = new DataView(buffer);
+        if (view.byteLength < 12 || view.getUint16(0, false) !== 0xFFD8) {
+          result.device = 'PNG/비JPEG 포맷';
+          return result;
+        }
+
+        let offset = 2;
+        const length = view.byteLength;
+        while (offset < length - 4) {
+          const marker = view.getUint16(offset, false);
+          offset += 2;
+          if (marker === 0xFFE1) { // APP1 EXIF
+            const size = view.getUint16(offset, false);
+            if (view.getUint32(offset + 2, false) === 0x45786966) { // "Exif"
+              const tiffStart = offset + 8;
+              const endianMark = view.getUint16(tiffStart, false);
+              const little = endianMark === 0x4949; // "II"
+
+              const firstIfdOffset = view.getUint32(tiffStart + 4, little);
+              const ifd0 = readIfdTags(view, tiffStart, tiffStart + firstIfdOffset, little);
+
+              const make = (ifd0[0x010F] || '').toString().trim();
+              const model = (ifd0[0x0110] || '').toString().trim();
+              if (make || model) {
+                result.device = model.toLowerCase().includes(make.toLowerCase()) ? model : `${make} ${model}`.trim();
+              }
+
+              if (ifd0[0x8769]) {
+                const exifIfd = readIfdTags(view, tiffStart, tiffStart + ifd0[0x8769], little);
+                if (typeof exifIfd[0x829A] === 'number' && exifIfd[0x829A] > 0) {
+                  const exp = exifIfd[0x829A];
+                  result.shutter = exp >= 1 ? `${exp.toFixed(1)}s` : `1/${Math.round(1 / exp)}s`;
+                }
+                if (typeof exifIfd[0x829D] === 'number' && exifIfd[0x829D] > 0) {
+                  result.aperture = `f/${exifIfd[0x829D].toFixed(1)}`;
+                }
+                if (exifIfd[0x8827] !== undefined) {
+                  result.iso = String(exifIfd[0x8827]);
+                }
+                if (typeof exifIfd[0x9204] === 'number') {
+                  result.ev = `${exifIfd[0x9204] >= 0 ? '+' : ''}${exifIfd[0x9204].toFixed(1)} EV`;
+                }
+                if (exifIfd[0xA403] !== undefined) {
+                  result.rawWbCode = exifIfd[0xA403];
+                  result.wb = exifIfd[0xA403] === 0 ? '자동(AWB)' : '수동(고정)';
+                }
+              }
+              break;
+            }
+            offset += size;
+          } else if ((marker & 0xFF00) !== 0xFF00) {
+            break;
+          } else {
+            const size = view.getUint16(offset, false);
+            offset += size;
+          }
+        }
+      } catch (err) {
+        console.warn('EXIF parse fallback:', err);
+      }
+      return result;
+    }
+
+    function readIfdTags(view, tiffStart, dirStart, little) {
+      const tags = {};
+      if (dirStart + 2 > view.byteLength) return tags;
+      const entries = view.getUint16(dirStart, little);
+
+      for (let i = 0; i < entries; i++) {
+        const entryOffset = dirStart + 2 + i * 12;
+        if (entryOffset + 12 > view.byteLength) break;
+        const tag = view.getUint16(entryOffset, little);
+        const type = view.getUint16(entryOffset + 2, little);
+        const count = view.getUint32(entryOffset + 4, little);
+        const valueOffset = entryOffset + 8;
+
+        if (type === 2) { // ASCII
+          const strOffset = count > 4 ? tiffStart + view.getUint32(valueOffset, little) : valueOffset;
+          if (strOffset + count <= view.byteLength) {
+            let s = '';
+            for (let j = 0; j < count - 1; j++) {
+              const ch = view.getUint8(strOffset + j);
+              if (ch === 0) break;
+              s += String.fromCharCode(ch);
+            }
+            tags[tag] = s;
+          }
+        } else if (type === 3) { // SHORT
+          tags[tag] = view.getUint16(valueOffset, little);
+        } else if (type === 4) { // LONG
+          tags[tag] = view.getUint32(valueOffset, little);
+        } else if (type === 5) { // RATIONAL
+          const ratOffset = tiffStart + view.getUint32(valueOffset, little);
+          if (ratOffset + 8 <= view.byteLength) {
+            const num = view.getUint32(ratOffset, little);
+            const den = view.getUint32(ratOffset + 4, little);
+            tags[tag] = den ? num / den : 0;
+          }
+        } else if (type === 10) { // SRATIONAL
+          const ratOffset = tiffStart + view.getUint32(valueOffset, little);
+          if (ratOffset + 8 <= view.byteLength) {
+            const num = view.getInt32(ratOffset, little);
+            const den = view.getInt32(ratOffset + 4, little);
+            tags[tag] = den ? num / den : 0;
+          }
+        }
+      }
+      return tags;
+    }
+
+    /* =====================================================================
+       6. 현실적인 데모 메탈릭 패널 + 시편 합성 캔버스 이미지 생성
+       ===================================================================== */
+    function loadSyntheticDemoImage() {
+      const off = document.createElement('canvas');
+      off.width = 900;
+      off.height = 640;
+      const ctx = off.getContext('2d');
+
+      // 배경: 좌측 차체(STD: 소닉 티타늄 살짝 어둡고 쿨톤 미세 입자), 우측 시편(Sample: 살짝 밝고 미세 웜톤 + 스파클 강함)
+      const splitX = Math.floor(off.width * 0.5);
+
+      // 수직 그라데이션 (상단 15° 하이라이트 -> 중단 45° 정면 -> 하단 105° 플롭)
+      const gradStd = ctx.createLinearGradient(0, 0, 0, off.height);
+      gradStd.addColorStop(0.00, '#B8BEC2'); // 15° STD
+      gradStd.addColorStop(0.45, '#8A9196'); // 45° STD
+      gradStd.addColorStop(1.00, '#5A6065'); // 105° STD
+      ctx.fillStyle = gradStd;
+      ctx.fillRect(0, 0, splitX - 3, off.height);
+
+      const gradSample = ctx.createLinearGradient(0, 0, 0, off.height);
+      gradSample.addColorStop(0.00, '#C5C9CA'); // 15° Sample (더 밝고 미세 웜)
+      gradSample.addColorStop(0.45, '#969A9B'); // 45° Sample
+      gradSample.addColorStop(1.00, '#666B6D'); // 105° Sample (측면 메탈릭 뜸)
+      ctx.fillStyle = gradSample;
+      ctx.fillRect(splitX + 3, 0, off.width - splitX - 3, off.height);
+
+      // 패널 경계선 (도어/시편 이음새)
+      ctx.fillStyle = '#181C22';
+      ctx.fillRect(splitX - 3, 0, 6, off.height);
+
+      // 현실적인 메탈릭 플레이크(입자) 텍스처 합성 (결정론적 의사난수 사용)
+      const imgData = ctx.getImageData(0, 0, off.width, off.height);
+      const data = imgData.data;
+      let seed = 1337;
+      const rand = () => {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+      };
+
+      for (let y = 0; y < off.height; y++) {
+        // 상단(15°)일수록 스파클 반짝임 강함, 하단(105°)일수록 약함
+        const angleFactor = 1.25 - (y / off.height) * 0.65;
+        for (let x = 0; x < off.width; x++) {
+          if (Math.abs(x - splitX) <= 3) continue;
+          const isSample = x > splitX;
+          const idx = (y * off.width + x) * 4;
+
+          const r1 = rand();
+          let noise = (r1 - 0.5) * (isSample ? 16 : 11) * angleFactor;
+
+          // 대입자 스파클 피크 (Sample 쪽에 조금 더 크고 강하게)
+          if (isSample && r1 > 0.965) {
+            noise += 28 * angleFactor;
+          } else if (!isSample && r1 > 0.978) {
+            noise += 18 * angleFactor;
+          }
+
+          data[idx]     = Math.min(255, Math.max(0, data[idx] + noise));
+          data[idx + 1] = Math.min(255, Math.max(0, data[idx + 1] + noise));
+          data[idx + 2] = Math.min(255, Math.max(0, data[idx + 2] + noise + (isSample ? -1.5 : 1.5)));
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      // 현장감 있는 마스킹 테이프 가이드라인(좌우 경계 근처)
+      ctx.fillStyle = 'rgba(234, 179, 8, 0.85)';
+      ctx.fillRect(splitX - 110, Math.floor(off.height * 0.34), 220, 7);
+      ctx.fillRect(splitX - 110, Math.floor(off.height * 0.66), 220, 7);
+
+      // 상단 워터마크 라벨
+      ctx.fillStyle = 'rgba(11, 13, 16, 0.65)';
+      ctx.fillRect(16, 16, 155, 28);
+      ctx.fillRect(off.width - 175, 16, 159, 28);
+      ctx.fillStyle = '#38BDF8';
+      ctx.font = 'bold 13px Inter, sans-serif';
+      ctx.fillText('STD (차체 1J7 원색)', 26, 35);
+      ctx.fillStyle = '#F59E0B';
+      ctx.fillText('SAMPLE (테스트 시편)', off.width - 165, 35);
+
+      const demoImg = new Image();
+      demoImg.onload = () => {
+        state.images.oneshot = demoImg;
+        state.images['15'] = demoImg;
+        state.images['45'] = demoImg;
+        state.images['105'] = demoImg;
+        state.exif = {
+          device: 'iPhone 18 Pro (데모)',
+          shutter: '1/125s',
+          aperture: 'f/1.8',
+          iso: '80',
+          wb: '수동(5500K 고정)',
+          ev: '0.0 EV',
+          rawWbCode: 1,
+          isDemo: true
+        };
+        // 핀 기본 위치 정렬
+        state.pins['15_std'].x = 0.28; state.pins['15_std'].y = 0.20;
+        state.pins['15_sample'].x = 0.72; state.pins['15_sample'].y = 0.20;
+        state.pins['45_std'].x = 0.28; state.pins['45_std'].y = 0.50;
+        state.pins['45_sample'].x = 0.72; state.pins['45_sample'].y = 0.50;
+        state.pins['105_std'].x = 0.28; state.pins['105_std'].y = 0.80;
+        state.pins['105_sample'].x = 0.72; state.pins['105_sample'].y = 0.80;
+
+        renderExifBar();
+        analyzePhotoCanvasAndDraw();
+        showToast('데모 메탈릭 패널(1J7)과 시편을 불러왔습니다.', 'success');
+      };
+      demoImg.src = off.toDataURL('image/png');
+    }
+
+    /* =====================================================================
+       7. 사진 업로드 및 캔버스 픽셀 측색 엔진
+       ===================================================================== */
+    function handleImageUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      // 1) EXIF 바이너리 읽기
+      const bufReader = new FileReader();
+      bufReader.onload = (e) => {
+        state.exif = parseExifFromArrayBuffer(e.target.result);
+        renderExifBar();
+      };
+      bufReader.readAsArrayBuffer(file);
+
+      // 2) 이미지 로드
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        if (state.photoLayout === 'oneshot') {
+          state.images.oneshot = img;
+        } else {
+          state.images[state.activeUploadAngle] = img;
+        }
+        URL.revokeObjectURL(url);
+        analyzePhotoCanvasAndDraw();
+        showToast('사진이 로드되었습니다. 차체(STD)와 시편 핀 위치를 맞춰주세요.', 'info');
+      };
+      img.onerror = () => {
+        showToast('이미지를 읽을 수 없습니다. JPG/PNG 형식인지 확인하세요.', 'error');
+      };
+      img.src = url;
+      event.target.value = '';
+    }
+
+    function getActiveCanvasImage() {
+      if (state.photoLayout === 'oneshot') {
+        return state.images.oneshot;
+      }
+      return state.images[state.activeUploadAngle] || state.images.oneshot;
+    }
+
+    /**
+     * 원형 ROI 내부 픽셀 평균 sRGB -> CIELAB + 스파클(입자감) 지수 + 클리핑 감지
+     */
+    function sampleCircularROI(sourceCtx, imgW, imgH, normX, normY, radiusPx) {
+      const cx = Math.round(normX * imgW);
+      const cy = Math.round(normY * imgH);
+      const r = Math.max(4, Math.round(radiusPx));
+
+      const x0 = Math.max(0, cx - r);
+      const y0 = Math.max(0, cy - r);
+      const x1 = Math.min(imgW - 1, cx + r);
+      const y1 = Math.min(imgH - 1, cy + r);
+      const w = Math.max(1, x1 - x0 + 1);
+      const h = Math.max(1, y1 - y0 + 1);
+
+      const imgData = sourceCtx.getImageData(x0, y0, w, h);
+      const d = imgData.data;
+
+      let sumR = 0, sumG = 0, sumB = 0;
+      let count = 0;
+      let clipHighCount = 0;
+      let clipLowCount = 0;
+      const lumList = [];
+
+      const rSq = r * r;
+      for (let py = 0; py < h; py++) {
+        const dy = (y0 + py) - cy;
+        for (let px = 0; px < w; px++) {
+          const dx = (x0 + px) - cx;
+          if (dx * dx + dy * dy > rSq) continue;
+          const idx = (py * w + px) * 4;
+          const R = d[idx], G = d[idx + 1], B = d[idx + 2];
+          sumR += R; sumG += G; sumB += B;
+          count++;
+          if (R > 245 || G > 245 || B > 245) clipHighCount++;
+          if (R < 10 && G < 10 && B < 10) clipLowCount++;
+          lumList.push(0.2126 * R + 0.7152 * G + 0.0722 * B);
+        }
+      }
+
+      if (count === 0) {
+        return { L: 50, a: 0, b: 0, C: 0, r: 128, g: 128, bRgb: 128, sparkle: 0, clipHigh: false, clipLow: false };
+      }
+
+      const avgR = sumR / count;
+      const avgG = sumG / count;
+      const avgB = sumB / count;
+      const lab = rgbToLab(avgR, avgG, avgB);
+
+      // 스파클/거칠기 지수: 휘도 표준편차 + 인접 픽셀 고주파 대비 결합
+      const meanLum = lumList.reduce((acc, v) => acc + v, 0) / lumList.length;
+      let varSum = 0;
+      for (let i = 0; i < lumList.length; i++) {
+        const diff = lumList[i] - meanLum;
+        varSum += diff * diff;
+      }
+      const stdLum = Math.sqrt(varSum / lumList.length);
+
+      let hfSum = 0, hfCount = 0;
+      for (let py = 1; py < h - 1; py++) {
+        for (let px = 1; px < w - 1; px++) {
+          const iC = (py * w + px) * 4;
+          const iR = (py * w + (px + 1)) * 4;
+          const iD = ((py + 1) * w + px) * 4;
+          const yC = 0.2126 * d[iC] + 0.7152 * d[iC + 1] + 0.0722 * d[iC + 2];
+          const yR = 0.2126 * d[iR] + 0.7152 * d[iR + 1] + 0.0722 * d[iR + 2];
+          const yD = 0.2126 * d[iD] + 0.7152 * d[iD + 1] + 0.0722 * d[iD + 2];
+          hfSum += Math.abs(yC - yR) + Math.abs(yC - yD);
+          hfCount++;
+        }
+      }
+      const hfMean = hfCount ? hfSum / (hfCount * 2) : 0;
+      const sparkle = Math.min(10, Math.max(0.5, (stdLum * 0.42 + hfMean * 0.35)));
+
+      return {
+        L: lab.L,
+        a: lab.a,
+        b: lab.b,
+        C: lab.C,
+        r: Math.round(avgR),
+        g: Math.round(avgG),
+        bRgb: Math.round(avgB),
+        sparkle: Number(sparkle.toFixed(1)),
+        clipHigh: (clipHighCount / count) > 0.08,
+        clipLow: (clipLowCount / count) > 0.08
+      };
+    }
+
+    // 오프스크린 이미지 샘플링 버퍼
+    const sampleBufferCanvas = document.createElement('canvas');
+    const sampleBufferCtx = sampleBufferCanvas.getContext('2d', { willReadFrequently: true });
+
+    function analyzePhotoCanvasAndDraw() {
+      const canvas = document.getElementById('photoCanvas');
+      const img = getActiveCanvasImage();
+      if (!canvas || !img) return;
+
+      // 반응형 캔버스 크기 설정
+      const containerW = canvas.parentElement.clientWidth || 360;
+      const aspect = img.naturalHeight / img.naturalWidth;
+      const displayW = Math.max(300, Math.round(containerW));
+      const displayH = Math.min(480, Math.max(220, Math.round(displayW * aspect)));
+
+      canvas.width = displayW;
+      canvas.height = displayH;
+      const ctx = canvas.getContext('2d');
+
+      // 이미지 그리기
+      ctx.clearRect(0, 0, displayW, displayH);
+      ctx.drawImage(img, 0, 0, displayW, displayH);
+
+      // 각도별 샘플링 수행
+      const angles = ['15', '45', '105'];
+      let anyClipHigh = false;
+      let anyClipLow = false;
+
+      angles.forEach(ang => {
+        const srcImg = (state.photoLayout === 'oneshot') ? state.images.oneshot : (state.images[ang] || state.images.oneshot);
+        if (!srcImg) return;
+
+        // 샘플링은 성능 및 일관성을 위해 가로 최대 800px 버퍼에서 수행
+        const sw = Math.min(800, srcImg.naturalWidth);
+        const sh = Math.round(sw * (srcImg.naturalHeight / srcImg.naturalWidth));
+        sampleBufferCanvas.width = sw;
+        sampleBufferCanvas.height = sh;
+        sampleBufferCtx.drawImage(srcImg, 0, 0, sw, sh);
+
+        const scaledR = state.roiRadius * (sw / displayW);
+        const pStd = state.pins[`${ang}_std`];
+        const pSam = state.pins[`${ang}_sample`];
+
+        const resStd = sampleCircularROI(sampleBufferCtx, sw, sh, pStd.x, pStd.y, scaledR);
+        const resSam = sampleCircularROI(sampleBufferCtx, sw, sh, pSam.x, pSam.y, scaledR);
+
+        if (state.measureMode === 'photo') {
+          state.measurements[ang].std = resStd;
+          state.measurements[ang].sample = resSam;
+        }
+
+        if (resStd.clipHigh || resSam.clipHigh) anyClipHigh = true;
+        if (resStd.clipLow || resSam.clipLow) anyClipLow = true;
+
+        // 비교 스트립 크롭 캔버스 업데이트
+        drawCropStrip(`crop${ang}Std`, srcImg, pStd.x, pStd.y);
+        drawCropStrip(`crop${ang}Sample`, srcImg, pSam.x, pSam.y);
+      });
+
+      // 핀 오버레이 그리기
+      const visiblePinKeys = state.photoLayout === 'oneshot'
+        ? Object.keys(state.pins)
+        : [`${state.activeUploadAngle}_std`, `${state.activeUploadAngle}_sample`];
+
+      visiblePinKeys.forEach(key => {
+        const pin = state.pins[key];
+        const px = pin.x * displayW;
+        const py = pin.y * displayH;
+        const isActive = key === state.activePinKey;
+
+        // 외곽 반투명 원
+        ctx.beginPath();
+        ctx.arc(px, py, state.roiRadius, 0, Math.PI * 2);
+        ctx.fillStyle = isActive ? 'rgba(0, 210, 255, 0.18)' : 'rgba(0, 0, 0, 0.12)';
+        ctx.fill();
+        ctx.lineWidth = isActive ? 2.5 : 1.75;
+        ctx.strokeStyle = pin.color;
+        ctx.stroke();
+
+        // 중앙 십자선
+        ctx.beginPath();
+        ctx.moveTo(px - 5, py); ctx.lineTo(px + 5, py);
+        ctx.moveTo(px, py - 5); ctx.lineTo(px, py + 5);
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
+
+        // 라벨 배지
+        const tagW = 58;
+        const tagH = 18;
+        const tx = Math.min(displayW - tagW - 4, Math.max(4, px - tagW / 2));
+        const ty = py - state.roiRadius - tagH - 4 < 4 ? py + state.roiRadius + 5 : py - state.roiRadius - tagH - 4;
+
+        ctx.fillStyle = isActive ? pin.color : 'rgba(11, 13, 16, 0.85)';
+        ctx.beginPath();
+        ctx.roundRect(tx, ty, tagW, tagH, 5);
+        ctx.fill();
+
+        ctx.fillStyle = isActive ? '#0B0D10' : '#FFFFFF';
+        ctx.font = 'bold 10px JetBrains Mono, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(pin.label, tx + tagW / 2, ty + tagH / 2 + 0.5);
+      });
+
+      updateExifExposureWarnings(anyClipHigh, anyClipLow);
+      updateStripMetricsUI();
+      updateHeaderBadge();
+      if (state.activeTab === 'report') renderReport();
+    }
+
+    function drawCropStrip(canvasId, img, normX, normY) {
+      const c = document.getElementById(canvasId);
+      if (!c || !img) return;
+      c.width = 240;
+      c.height = 120;
+      const ctx = c.getContext('2d');
+
+      const cropSize = Math.min(img.naturalWidth, img.naturalHeight) * 0.20;
+      const sx = Math.max(0, Math.min(img.naturalWidth - cropSize, normX * img.naturalWidth - cropSize / 2));
+      const sy = Math.max(0, Math.min(img.naturalHeight - cropSize * 0.55, normY * img.naturalHeight - cropSize * 0.275));
+
+      ctx.drawImage(img, sx, sy, cropSize, cropSize * 0.55, 0, 0, c.width, c.height);
+    }
+
+    function drawLoupe(normX, normY, pinLabel) {
+      const container = document.getElementById('loupeContainer');
+      const loupeCanvas = document.getElementById('loupeCanvas');
+      const img = getActiveCanvasImage();
+      if (!img || !loupeCanvas) return;
+
+      container.classList.remove('hidden');
+      document.getElementById('loupeLabel').textContent = pinLabel;
+      const ctx = loupeCanvas.getContext('2d');
+      const zoomBox = Math.min(img.naturalWidth, img.naturalHeight) * 0.14;
+      const sx = Math.max(0, Math.min(img.naturalWidth - zoomBox, normX * img.naturalWidth - zoomBox / 2));
+      const sy = Math.max(0, Math.min(img.naturalHeight - zoomBox, normY * img.naturalHeight - zoomBox / 2));
+
+      ctx.clearRect(0, 0, 120, 120);
+      ctx.drawImage(img, sx, sy, zoomBox, zoomBox, 0, 0, 120, 120);
+
+      // 십자 타겟
+      ctx.strokeStyle = '#00D2FF';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(60, 60, 24, 0, Math.PI * 2);
+      ctx.moveTo(48, 60); ctx.lineTo(72, 60);
+      ctx.moveTo(60, 48); ctx.lineTo(60, 72);
+      ctx.stroke();
+    }
+
+    function hideLoupe() {
+      document.getElementById('loupeContainer').classList.add('hidden');
+    }
+
+    function setupCanvasPointerEvents() {
+      const canvas = document.getElementById('photoCanvas');
+
+      const getNormPos = (clientX, clientY) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = Math.min(0.96, Math.max(0.04, (clientX - rect.left) / rect.width));
+        const y = Math.min(0.96, Math.max(0.04, (clientY - rect.top) / rect.height));
+        return { x, y };
+      };
+
+      const findNearestPin = (normX, normY) => {
+        const keys = state.photoLayout === 'oneshot'
+          ? Object.keys(state.pins)
+          : [`${state.activeUploadAngle}_std`, `${state.activeUploadAngle}_sample`];
+        let bestKey = null;
+        let minDist = 0.085; // 히트 반경
+        keys.forEach(k => {
+          const p = state.pins[k];
+          const dist = Math.hypot(p.x - normX, p.y - normY);
+          if (dist < minDist) {
+            minDist = dist;
+            bestKey = k;
+          }
+        });
+        return bestKey;
+      };
+
+      const onStart = (clientX, clientY) => {
+        const pos = getNormPos(clientX, clientY);
+        const hit = findNearestPin(pos.x, pos.y);
+        if (hit) {
+          state.activePinKey = hit;
+          renderPinSelectorGrid();
+        }
+        state.isDraggingPin = true;
+        state.pins[state.activePinKey].x = pos.x;
+        state.pins[state.activePinKey].y = pos.y;
+        drawLoupe(pos.x, pos.y, state.pins[state.activePinKey].label);
+        analyzePhotoCanvasAndDraw();
+      };
+
+      const onMove = (clientX, clientY) => {
+        if (!state.isDraggingPin) return;
+        const pos = getNormPos(clientX, clientY);
+        state.pins[state.activePinKey].x = pos.x;
+        state.pins[state.activePinKey].y = pos.y;
+        drawLoupe(pos.x, pos.y, state.pins[state.activePinKey].label);
+        analyzePhotoCanvasAndDraw();
+      };
+
+      const onEnd = () => {
+        if (!state.isDraggingPin) return;
+        state.isDraggingPin = false;
+        hideLoupe();
+        // 위치 변경 시 리포트 자동 갱신 트리거
+        state.lastAutoSignature = '';
+      };
+
+      canvas.addEventListener('mousedown', (e) => onStart(e.clientX, e.clientY));
+      window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+      window.addEventListener('mouseup', onEnd);
+
+      canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) {
+          e.preventDefault();
+          onStart(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+      canvas.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          e.preventDefault();
+          onMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+      window.addEventListener('touchend', onEnd);
+    }
+
+    function renderExifBar() {
+      document.getElementById('exifDevice').textContent = state.exif.device;
+      document.getElementById('exifShutter').textContent = state.exif.shutter;
+      document.getElementById('exifAperture').textContent = state.exif.aperture;
+      document.getElementById('exifIso').textContent = state.exif.iso;
+      document.getElementById('exifWb').textContent = state.exif.wb;
+      document.getElementById('exifEv').textContent = state.exif.ev;
+    }
+
+    function updateExifExposureWarnings(clipHigh, clipLow) {
+      const badge = document.getElementById('exifWarningBadge');
+      const advice = document.getElementById('exifAdviceText');
+
+      if (clipHigh) {
+        badge.textContent = '⚠ 하이라이트 클리핑';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-rosepro/15 text-rosepro border border-rosepro/40';
+        advice.textContent = '선택 영역에 광원 직접 반사(RGB > 245)가 감지되었습니다. 형광등/LED 직사 반사를 피해 핀을 이동하세요.';
+      } else if (clipLow) {
+        badge.textContent = '⚠ 암부 뭉개짐';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amberpro/15 text-amberpro border border-amberpro/40';
+        advice.textContent = '어두운 그림자 영역(RGB < 10)이 감지되었습니다. 부스 조명이 고르게 비치는 위치에서 다시 지정하세요.';
+      } else if (state.exif.rawWbCode === 0 && state.photoLayout === 'multi') {
+        badge.textContent = '⚠ AWB 개별촬영 주의';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amberpro/15 text-amberpro border border-amberpro/40';
+        advice.textContent = '자동 화이트밸런스(AWB)로 촬영되었습니다. 차체와 시편을 한 프레임에 넣는 원샷 동시 비교가 훨씬 정확합니다.';
+      } else {
+        badge.textContent = '✓ 노출·상대비교 양호';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emeraldpro/15 text-emeraldpro border border-emeraldpro/40';
+        advice.textContent = state.photoLayout === 'oneshot'
+          ? '원샷 동시 촬영 조건: 차체와 시편이 동일한 셔속·화밸·톤매핑 조건에 있어 상대 색차(ΔL*Δa*Δb*) 신뢰도가 높습니다.'
+          : '개별 촬영 조건: 세 각도의 조명 거리와 노출이 동일한지 확인하세요.';
+      }
+    }
+
+    function updateStripMetricsUI() {
+      ['15', '45', '105'].forEach(ang => {
+        const m = state.measurements[ang];
+        const dE = ciede2000(m.std, m.sample);
+        const dL = m.sample.L - m.std.L;
+
+        const deEl = document.getElementById(`stripDe${ang}`);
+        if (deEl) {
+          deEl.textContent = `Δ${dE.toFixed(2)}`;
+          deEl.className = `mt-1 text-[10px] font-mono font-bold tabular-nums ${dE < 0.7 ? 'text-emeraldpro' : dE < 1.8 ? 'text-amberpro' : 'text-rosepro'}`;
+        }
+        const stdEl = document.getElementById(`stripLab${ang}Std`);
+        const samEl = document.getElementById(`stripLab${ang}Sample`);
+        if (stdEl) stdEl.textContent = `L* ${m.std.L.toFixed(1)}`;
+        if (samEl) samEl.textContent = `ΔL ${formatSigned(dL, 1)}`;
+      });
+
+      const spStd = (state.measurements['15'].std.sparkle * 0.6 + state.measurements['45'].std.sparkle * 0.4);
+      const spSam = (state.measurements['15'].sample.sparkle * 0.6 + state.measurements['45'].sample.sparkle * 0.4);
+      const fiStd = calcFlopIndex(state.measurements['15'].std.L, state.measurements['45'].std.L, state.measurements['105'].std.L);
+      const fiSam = calcFlopIndex(state.measurements['15'].sample.L, state.measurements['45'].sample.L, state.measurements['105'].sample.L);
+
+      document.getElementById('metricSparkleStd').textContent = `${spStd.toFixed(1)} (${getSparkleGrade(spStd)})`;
+      document.getElementById('metricSparkleSample').textContent = `${spSam.toFixed(1)} (${formatSigned(spSam - spStd, 1)})`;
+      document.getElementById('metricFlopDiff').textContent = `${formatSigned(fiSam - fiStd, 2)} FI`;
+    }
+
+    function getSparkleGrade(val) {
+      if (val < 2.2) return '솔리드/초미세';
+      if (val < 4.5) return '미세 펄/메탈릭';
+      if (val < 6.4) return '중입자 메탈릭';
+      return '대입자 스파클';
+    }
+
+    /* =====================================================================
+       8. 색측기 직접 입력 UI & 현장 시나리오 프리셋
+       ===================================================================== */
+    function renderSpectroInputs() {
+      const container = document.getElementById('spectroInputsContainer');
+      const angleMeta = [
+        { key: '15', title: '15° 하이라이트 (Hue / Sparkle)' },
+        { key: '45', title: '45° 정면 (Structure / Face)' },
+        { key: '105', title: '105° 측면 (Flop / Value)' }
+      ];
+
+      container.innerHTML = angleMeta.map(item => {
+        const m = state.measurements[item.key];
+        const dE = ciede2000(m.std, m.sample);
+        const cStd = calcChroma(m.std.a, m.std.b);
+        const cSam = calcChroma(m.sample.a, m.sample.b);
+        return `
+          <div class="bg-obsidian border border-line rounded-xl p-3 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-white">${item.title}</span>
+              <span id="specDe_${item.key}" class="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${dE < 0.7 ? 'bg-emeraldpro/15 text-emeraldpro' : dE < 1.8 ? 'bg-amberpro/15 text-amberpro' : 'bg-rosepro/15 text-rosepro'}">
+                ΔE00: ${dE.toFixed(2)}
+              </span>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5 text-[10px] font-mono text-center text-gray-400">
+              <div class="text-left pl-1 font-sans">구분</div><div>L* (명도)</div><div>a* (적/녹)</div><div>b* (황/청)</div>
+            </div>
+            <!-- 기준(차체) -->
+            <div class="grid grid-cols-4 gap-1.5 items-center">
+              <span class="text-[11px] font-bold text-cyanpro pl-1">기준(차체)</span>
+              <input type="number" step="0.01" value="${m.std.L.toFixed(2)}" onchange="updateSpectroVal('${item.key}','std','L',this.value)" class="bg-card border border-line rounded-lg px-2 py-1.5 text-xs font-mono text-right text-white focus:border-cyanpro outline-none" />
+              <input type="number" step="0.01" value="${m.std.a.toFixed(2)}" onchange="updateSpectroVal('${item.key}','std','a',this.value)" class="bg-card border border-line rounded-lg px-2 py-1.5 text-xs font-mono text-right text-white focus:border-cyanpro outline-none" />
+              <input type="number" step="0.01" value="${m.std.b.toFixed(2)}" onchange="updateSpectroVal('${item.key}','std','b',this.value)" class="bg-card border border-line rounded-lg px-2 py-1.5 text-xs font-mono text-right text-white focus:border-cyanpro outline-none" />
+            </div>
+            <!-- 시편(작업면) -->
+            <div class="grid grid-cols-4 gap-1.5 items-center">
+              <span class="text-[11px] font-bold text-amberpro pl-1">시편(작업)</span>
+              <input type="number" step="0.01" value="${m.sample.L.toFixed(2)}" onchange="updateSpectroVal('${item.key}','sample','L',this.value)" class="bg-card border border-line rounded-lg px-2 py-1.5 text-xs font-mono text-right text-white focus:border-cyanpro outline-none" />
+              <input type="number" step="0.01" value="${m.sample.a.toFixed(2)}" onchange="updateSpectroVal('${item.key}','sample','a',this.value)" class="bg-card border border-line rounded-lg px-2 py-1.5 text-xs font-mono text-right text-white focus:border-cyanpro outline-none" />
+              <input type="number" step="0.01" value="${m.sample.b.toFixed(2)}" onchange="updateSpectroVal('${item.key}','sample','b',this.value)" class="bg-card border border-line rounded-lg px-2 py-1.5 text-xs font-mono text-right text-white focus:border-cyanpro outline-none" />
+            </div>
+            <!-- 편차 요약 -->
+            <div class="grid grid-cols-4 gap-1.5 pt-1 border-t border-line/60 text-[10px] font-mono tabular-nums text-right">
+              <div class="text-left text-gray-400 font-sans pl-1">시편−기준</div>
+              <div class="${Math.abs(m.sample.L - m.std.L) > 0.4 ? 'text-amberpro font-bold' : 'text-gray-300'}">ΔL ${formatSigned(m.sample.L - m.std.L)}</div>
+              <div class="${Math.abs(m.sample.a - m.std.a) > 0.35 ? 'text-amberpro font-bold' : 'text-gray-300'}">Δa ${formatSigned(m.sample.a - m.std.a)}</div>
+              <div class="${Math.abs(m.sample.b - m.std.b) > 0.35 ? 'text-amberpro font-bold' : 'text-gray-300'}">Δb ${formatSigned(m.sample.b - m.std.b)}</div>
+            </div>
+            <div class="flex justify-between text-[10px] font-mono text-gray-500 px-1">
+              <span>C* 기준 ${cStd.toFixed(2)} / 시편 ${cSam.toFixed(2)}</span>
+              <span>ΔC* ${formatSigned(cSam - cStd)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateSpectroVal(angle, role, field, val) {
+      const num = parseFloat(val);
+      if (isNaN(num)) return;
+      state.measurements[angle][role][field] = num;
+      state.measurements[angle][role].C = calcChroma(state.measurements[angle][role].a, state.measurements[angle][role].b);
+      state.lastAutoSignature = '';
+      renderSpectroInputs();
+      updateHeaderBadge();
+    }
+
+    function loadSpectroScenario(key) {
+      if (key === '1J7_bright') {
+        applyColorPreset('1J7', true);
+        state.measurements = {
+          '15':  { std: { L: 72.40, a: -0.45, b: -1.85, sparkle: 5.2 }, sample: { L: 74.60, a: -0.35, b: -1.10, sparkle: 6.8 } },
+          '45':  { std: { L: 55.10, a: -0.40, b: -2.05, sparkle: 4.0 }, sample: { L: 56.85, a: -0.28, b: -1.25, sparkle: 4.9 } },
+          '105': { std: { L: 36.20, a: -0.35, b: -1.90, sparkle: 2.1 }, sample: { L: 38.45, a: -0.25, b: -1.35, sparkle: 3.1 } }
+        };
+        showToast('시나리오 로드: 렉서스 1J7 소닉 티타늄 (시편 밝음 + 메탈릭 뜸)', 'info');
+      } else if (key === '070_yellow') {
+        applyColorPreset('070', true);
+        state.measurements = {
+          '15':  { std: { L: 91.20, a: -0.55, b: 1.40, sparkle: 3.4 }, sample: { L: 92.35, a: -0.48, b: 2.35, sparkle: 3.5 } },
+          '45':  { std: { L: 87.80, a: -0.42, b: 1.25, sparkle: 2.6 }, sample: { L: 88.90, a: -0.36, b: 2.15, sparkle: 2.7 } },
+          '105': { std: { L: 81.40, a: -0.35, b: 1.10, sparkle: 1.8 }, sample: { L: 82.25, a: -0.30, b: 1.88, sparkle: 1.9 } }
+        };
+        showToast('시나리오 로드: 토요타 070 화이트 펄 (노란기 + 명도 과다)', 'info');
+      } else if (key === '223_dark') {
+        applyColorPreset('223', true);
+        state.measurements = {
+          '15':  { std: { L: 29.40, a: 1.12, b: -2.05, sparkle: 6.1 }, sample: { L: 28.55, a: 1.05, b: -1.68, sparkle: 5.8 } },
+          '45':  { std: { L: 22.05, a: 1.06, b: -1.91, sparkle: 4.2 }, sample: { L: 21.18, a: 1.01, b: -1.52, sparkle: 4.0 } },
+          '105': { std: { L: 14.80, a: 0.85, b: -1.60, sparkle: 2.0 }, sample: { L: 14.15, a: 0.81, b: -1.35, sparkle: 1.9 } }
+        };
+        showToast('시나리오 로드: 렉서스 223 그라파이트 블랙 (시편 어두움 + 청색 부족)', 'info');
+      } else if (key === '1G3_matte') {
+        applyColorPreset('1G3', true);
+        state.vehicle.finish = 'matte';
+        document.getElementById('selectFinishType').value = 'matte';
+        state.measurements = {
+          '15':  { std: { L: 46.10, a: -0.30, b: -1.40, sparkle: 2.4 }, sample: { L: 46.55, a: -0.27, b: -1.32, sparkle: 2.5 } },
+          '45':  { std: { L: 38.40, a: -0.25, b: -1.55, sparkle: 2.0 }, sample: { L: 38.78, a: -0.22, b: -1.48, sparkle: 2.1 } },
+          '105': { std: { L: 28.90, a: -0.20, b: -1.40, sparkle: 1.5 }, sample: { L: 29.15, a: -0.18, b: -1.34, sparkle: 1.5 } }
+        };
+        showToast('시나리오 로드: 렉서스 1G3 무광 클리어 (미세 편차 보류)', 'info');
+      }
+      state.lastAutoSignature = '';
+      renderSpectroInputs();
+      updateHeaderBadge();
+      renderReport();
+    }
+
+    /* =====================================================================
+       9. TAB 2: 배합표 관리 및 WT 토너 도감 렌더링
+       ===================================================================== */
+    function renderTonerIconHtml(toner) {
+      if (toner.type === 'binder' || toner.type === 'additive') {
+        return `<span class="inline-flex items-center justify-center w-5 h-5 rounded-md border border-white/30 shadow-inner" style="background: linear-gradient(135deg, ${toner.hex}, #64748B)"></span>`;
+      }
+      const circle = `<span class="inline-block w-4 h-4 rounded-full border border-white/30 shrink-0" style="background: radial-gradient(circle at 35% 35%, #ffffff88, ${toner.hex} 65%)"></span>`;
+      if (toner.sparkle > 0) {
+        return `<span class="inline-flex items-center gap-1">${circle}<span class="text-[10px] font-mono font-extrabold text-amberpro">✨${toner.sparkle}</span></span>`;
+      }
+      return circle;
+    }
+
+    function applyColorPreset(code, silent = false) {
+      const customBox = document.getElementById('customColorFields');
+      if (code === 'CUSTOM') {
+        customBox.classList.remove('hidden');
+        return;
+      }
+      customBox.classList.add('hidden');
+      const preset = COLOR_PRESETS[code];
+      if (!preset) return;
+
+      state.vehicle.brand = preset.brand;
+      state.vehicle.model = preset.model;
+      state.vehicle.colorCode = preset.code;
+      state.vehicle.colorName = preset.name;
+      state.vehicle.finish = preset.finish;
+      state.recipe = preset.recipe.map(item => ({ code: item.code, grams: item.grams }));
+      state.adjustments = {};
+      state.lastAutoSignature = '';
+
+      // UI 동기화
+      document.getElementById('selectColorPreset').value = code;
+      document.getElementById('inputModel').value = preset.model;
+      document.getElementById('selectFinishType').value = preset.finish;
+      setBrand(preset.brand, true);
+
+      renderRecipeTable();
+      updateHeaderBadge();
+      if (!silent) showToast(`${preset.brand} ${preset.code} 기본 Hi-TEC 배합표가 로드되었습니다.`, 'info');
+    }
+
+    function setBrand(brand, silent = false) {
+      state.vehicle.brand = brand;
+      const bL = document.getElementById('btnBrandLexus');
+      const bT = document.getElementById('btnBrandToyota');
+      if (brand === 'LEXUS') {
+        bL.className = 'py-1.5 rounded-lg text-xs font-bold bg-cyanpro/20 text-cyanpro border border-cyanpro/40 transition';
+        bT.className = 'py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition';
+      } else {
+        bT.className = 'py-1.5 rounded-lg text-xs font-bold bg-cyanpro/20 text-cyanpro border border-cyanpro/40 transition';
+        bL.className = 'py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition';
+      }
+      if (!silent) updateHeaderBadge();
+    }
+
+    function getRecipeTotals(recipeList) {
+      let pigmentSum = 0;
+      let binderSum = 0;
+      recipeList.forEach(item => {
+        if (item.code === 'WT300') binderSum += item.grams;
+        else pigmentSum += item.grams;
+      });
+      return { pigmentSum, binderSum, total: pigmentSum + binderSum };
+    }
+
+    function renderRecipeTable() {
+      const tbody = document.getElementById('recipeTableBody');
+      const tfoot = document.getElementById('recipeTableFooter');
+      const totals = getRecipeTotals(state.recipe);
+
+      tbody.innerHTML = state.recipe.map((row, idx) => {
+        const info = getTonerInfo(row.code);
+        const pct = totals.total > 0 ? (row.grams / totals.total) * 100 : 0;
+        return `
+          <tr class="hover:bg-surface/40">
+            <td class="py-2 px-2.5">
+              <div class="flex items-center gap-2">
+                ${renderTonerIconHtml(info)}
+                <span class="font-mono font-bold text-white">${row.code}</span>
+              </div>
+            </td>
+            <td class="py-2 px-2">
+              <div class="text-gray-200 font-medium leading-tight">${info.name}</div>
+              <div class="text-[10px] text-gray-400 leading-tight">${info.kr}</div>
+            </td>
+            <td class="py-2 px-2 text-right">
+              <input type="number" step="0.001" min="0" value="${row.grams.toFixed(3)}"
+                onchange="updateRecipeGrams(${idx}, this.value)"
+                class="w-20 bg-card border border-line rounded-lg px-2 py-1 text-right font-mono tabular-nums text-white focus:border-cyanpro outline-none" />
+            </td>
+            <td class="py-2 px-2 text-right font-mono tabular-nums text-[11px] text-gray-400">${pct.toFixed(1)}%</td>
+            <td class="py-2 px-1.5 text-center">
+              <button onclick="removeRecipeRow(${idx})" class="w-6 h-6 rounded-lg text-gray-500 hover:text-rosepro hover:bg-rosepro/10 transition">✕</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      tfoot.innerHTML = `
+        <tr class="text-gray-300">
+          <td colspan="2" class="py-2 px-2.5 font-sans font-semibold">조색제 합계 (토너·첨가제)</td>
+          <td class="py-2 px-2 text-right">${totals.pigmentSum.toFixed(3)} g</td>
+          <td class="py-2 px-2 text-right text-[11px] text-gray-400">${totals.total > 0 ? ((totals.pigmentSum / totals.total) * 100).toFixed(1) : '0.0'}%</td>
+          <td></td>
+        </tr>
+        <tr class="text-gray-300 border-t border-line/60">
+          <td colspan="2" class="py-2 px-2.5 font-sans font-semibold">바인더/수지 (WT300)</td>
+          <td class="py-2 px-2 text-right">${totals.binderSum.toFixed(3)} g</td>
+          <td class="py-2 px-2 text-right text-[11px] text-gray-400">${totals.total > 0 ? ((totals.binderSum / totals.total) * 100).toFixed(1) : '0.0'}%</td>
+          <td></td>
+        </tr>
+        <tr class="text-cyanpro font-extrabold border-t border-line">
+          <td colspan="2" class="py-2.5 px-2.5 font-sans">총량 (Total Batch)</td>
+          <td class="py-2.5 px-2 text-right">${totals.total.toFixed(3)} g</td>
+          <td class="py-2.5 px-2 text-right">100%</td>
+          <td></td>
+        </tr>
+      `;
+    }
+
+    function updateRecipeGrams(index, val) {
+      const num = Math.max(0, parseFloat(val) || 0);
+      state.recipe[index].grams = num;
+      state.lastAutoSignature = '';
+      renderRecipeTable();
+    }
+
+    function removeRecipeRow(index) {
+      const removed = state.recipe.splice(index, 1);
+      if (removed[0]) delete state.adjustments[removed[0].code];
+      state.lastAutoSignature = '';
+      renderRecipeTable();
+    }
+
+    function scaleRecipe(targetGrams) {
+      const totals = getRecipeTotals(state.recipe);
+      if (totals.total <= 0) return;
+      const factor = targetGrams / totals.total;
+      state.recipe.forEach(item => {
+        item.grams = Number((item.grams * factor).toFixed(3));
+      });
+      state.lastAutoSignature = '';
+      renderRecipeTable();
+      showToast(`배합 총량을 ${targetGrams}g 기준으로 환산했습니다.`, 'success');
+    }
+
+    function openTonerModal() {
+      document.getElementById('tonerModal').classList.remove('hidden');
+      renderTonerCatalog();
+    }
+
+    function closeTonerModal() {
+      document.getElementById('tonerModal').classList.add('hidden');
+    }
+
+    function renderTonerCatalog() {
+      const q = (document.getElementById('tonerSearchInput').value || '').trim().toLowerCase();
+      const tbody = document.getElementById('tonerCatalogBody');
+      const filtered = WT_TONER_DB.filter(t =>
+        !q || t.code.toLowerCase().includes(q) || t.name.toLowerCase().includes(q) || t.kr.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q)
+      );
+
+      tbody.innerHTML = filtered.map(t => {
+        const exists = state.recipe.some(r => r.code === t.code);
+        return `
+          <tr class="hover:bg-surface/50">
+            <td class="py-2.5 px-2">${renderTonerIconHtml(t)}</td>
+            <td class="py-2.5 px-2 font-mono font-bold text-white">${t.code}</td>
+            <td class="py-2.5 px-2">
+              <div class="font-semibold text-gray-100">${t.name} <span class="text-cyanpro font-normal">(${t.kr})</span></div>
+              <div class="text-[10px] text-gray-400 mt-0.5">${t.desc}</div>
+            </td>
+            <td class="py-2.5 px-2 text-right">
+              <button onclick="addTonerFromCatalog('${t.code}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${exists ? 'bg-surface text-gray-400 border border-line' : 'bg-cyanpro/20 text-cyanpro border border-cyanpro/40 hover:bg-cyanpro/30'}">
+                ${exists ? '포함됨' : '+ 추가'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function addTonerFromCatalog(code) {
+      if (state.recipe.some(r => r.code === code)) {
+        showToast(`${code} 토너는 이미 배합표에 포함되어 있습니다.`, 'info');
+        return;
+      }
+      // 바인더 WT300 바로 위에 삽입
+      const binderIdx = state.recipe.findIndex(r => r.code === 'WT300');
+      const newItem = { code, grams: 1.000 };
+      if (binderIdx >= 0) state.recipe.splice(binderIdx, 0, newItem);
+      else state.recipe.push(newItem);
+
+      state.lastAutoSignature = '';
+      renderRecipeTable();
+      renderTonerCatalog();
+      showToast(`${code} 토너가 배합표에 추가되었습니다.`, 'success');
+    }
+
+    function addCustomTonerToRecipe() {
+      const codeInput = document.getElementById('customTonerCode');
+      const nameInput = document.getElementById('customTonerName');
+      const code = codeInput.value.trim().toUpperCase();
+      const name = nameInput.value.trim() || '커스텀 토너';
+      if (!code) {
+        showToast('추가할 토너 코드를 입력하세요. (예: WT389)', 'error');
+        return;
+      }
+      if (!WT_TONER_DB.some(t => t.code === code)) {
+        WT_TONER_DB.push({ code, name, kr: name, type: 'tint', hex: '#94A3B8', sparkle: 0, desc: '사용자 직접 추가 토너' });
+      }
+      addTonerFromCatalog(code);
+      codeInput.value = '';
+      nameInput.value = '';
+    }
+
+    /* =====================================================================
+       10. TAB 3: 하이텍 전문 조색 분석 & 자동 보정안 산출 엔진
+       ===================================================================== */
+    function computeAnalysisModel() {
+      const m15 = state.measurements['15'];
+      const m45 = state.measurements['45'];
+      const m105 = state.measurements['105'];
+
+      // 시편 - 기준 편차
+      const d15  = { dL: m15.sample.L - m15.std.L,  da: m15.sample.a - m15.std.a,  db: m15.sample.b - m15.std.b,  dE: ciede2000(m15.std, m15.sample),  dSparkle: (m15.sample.sparkle || 0) - (m15.std.sparkle || 0) };
+      const d45  = { dL: m45.sample.L - m45.std.L,  da: m45.sample.a - m45.std.a,  db: m45.sample.b - m45.std.b,  dE: ciede2000(m45.std, m45.sample),  dSparkle: (m45.sample.sparkle || 0) - (m45.std.sparkle || 0) };
+      const d105 = { dL: m105.sample.L - m105.std.L, da: m105.sample.a - m105.std.a, db: m105.sample.b - m105.std.b, dE: ciede2000(m105.std, m105.sample), dSparkle: (m105.sample.sparkle || 0) - (m105.std.sparkle || 0) };
+
+      const maxDe = Math.max(d15.dE, d45.dE, d105.dE);
+      const fiStd = calcFlopIndex(m15.std.L, m45.std.L, m105.std.L);
+      const fiSam = calcFlopIndex(m15.sample.L, m45.sample.L, m105.sample.L);
+      const dFlop = fiSam - fiStd;
+
+      // 무광 클리어 보류 또는 초근접(ΔE00 < 0.70) 판정
+      const isMatteHold = state.vehicle.finish === 'matte' && Math.abs(d45.dL) < 1.0 && Math.abs(d45.da) < 0.4 && Math.abs(d45.db) < 0.4 && maxDe < 1.1;
+      const isPassHold = maxDe < 0.70 || isMatteHold;
+
+      // 문제 항목 감지
+      const issues = [];
+      if (!isPassHold) {
+        if (Math.abs(d45.dL) >= 0.45 || Math.abs(d105.dL) >= 0.55) issues.push('VALUE');
+        if (Math.abs(d45.db) >= 0.40 || Math.abs(d45.da) >= 0.35 || Math.abs(d15.db) >= 0.45) issues.push('HUE');
+        const cDiff45 = calcChroma(m45.sample.a, m45.sample.b) - calcChroma(m45.std.a, m45.std.b);
+        if (Math.abs(cDiff45) >= 0.45) issues.push('CHROMA');
+        if (d105.dL >= 0.75 || Math.abs(dFlop) >= 0.85) issues.push('FLOP');
+        if (d15.dSparkle >= 0.9 || (d15.dL >= 1.1 && d15.dL > d45.dL + 0.35)) issues.push('SPARKLE');
+      }
+      if (issues.length === 0 && !isPassHold) issues.push('VALUE');
+
+      const hasMetallicIssue = issues.includes('FLOP') || issues.includes('SPARKLE');
+      const structureMatch = isPassHold ? 'YES' : hasMetallicIssue ? '조정 필요 (NO)' : '잠정 YES';
+
+      // 배합표 내 주요 토너 역할 분류
+      const totals = getRecipeTotals(state.recipe);
+      const findInRecipe = (codes) => state.recipe.find(r => codes.includes(r.code) && r.grams > 0);
+      const fineSilver   = findInRecipe(['WT320', 'WT321']);
+      const coarseSilver = findInRecipe(['WT324', 'WT326']);
+      const medSilver    = findInRecipe(['WT322']);
+      const whiteToner   = findInRecipe(['WT301', 'WT303']);
+      const blackToner   = findInRecipe(['WT306', 'WT305', 'WT307']);
+      const blueViolet   = findInRecipe(['WT337', 'WT334', 'WT330']);
+      const yellowToner  = findInRecipe(['WT350', 'WT354']);
+      const redToner     = findInRecipe(['WT360', 'WT363', 'WT367']);
+      const greenToner   = findInRecipe(['WT342']);
+      const flopAdditive = findInRecipe(['WT310']);
+
+      // 자동 보정안 산출 (시그니처 변경 시 자동 재생성)
+      const sig = JSON.stringify({
+        m: [d15.dL.toFixed(2), d45.dL.toFixed(2), d105.dL.toFixed(2), d45.da.toFixed(2), d45.db.toFixed(2), d15.dSparkle.toFixed(1)],
+        r: state.recipe.map(x => `${x.code}:${x.grams.toFixed(2)}`),
+        f: state.vehicle.finish
+      });
+
+      if (state.lastAutoSignature !== sig) {
+        const autoAdj = {};
+        if (!isPassHold) {
+          const batchScale = Math.max(0.5, totals.total / 100);
+
+          // 1) 측면(105°) 플롭 과다 / 메탈릭 뜸 -> 초소형 메탈릭(WT320/WT321) 강하게 감량 (-5 ~ -10%)
+          if (d105.dL >= 0.70 && fineSilver) {
+            const pct = -Math.min(10, Math.max(5, Math.round(d105.dL * 3.8)));
+            autoAdj[fineSilver.code] = { pctDelta: pct, addGrams: 0 };
+          }
+          // 2) 정면(15°) 스파클 과다 / 하이라이트 튐 -> 대입자 메탈릭(WT324/WT326) 약하게 감량 (-2 ~ -5%)
+          if ((d15.dSparkle >= 0.8 || d15.dL >= 1.1) && coarseSilver) {
+            const pct = -Math.min(5, Math.max(2, Math.round(Math.max(d15.dSparkle * 2, d15.dL * 1.8))));
+            autoAdj[coarseSilver.code] = { pctDelta: pct, addGrams: 0 };
+          }
+          // 3) 플롭 안정화 첨가제(WT310) 소량 증량
+          if (d105.dL >= 0.90 && (fineSilver || coarseSilver || medSilver)) {
+            if (flopAdditive) {
+              autoAdj[flopAdditive.code] = { pctDelta: 10, addGrams: 0 };
+            } else {
+              autoAdj['WT310'] = { pctDelta: 0, addGrams: Number((0.15 * batchScale).toFixed(3)), isSuggestedAddition: true };
+            }
+          }
+
+          // 4) 명도(VALUE) 보정
+          if (d45.dL >= 0.45) {
+            // 시편이 차체보다 밝음 -> 화이트 감량 또는 블랙 증량
+            const whiteShare = whiteToner && totals.pigmentSum > 0 ? (whiteToner.grams / totals.pigmentSum) : 0;
+            if (whiteToner && whiteShare > 0.35) {
+              const pct = -Math.min(6, Math.max(2, Math.round(d45.dL * 2.2)));
+              autoAdj[whiteToner.code] = { pctDelta: pct, addGrams: 0 };
+            } else if (blackToner) {
+              const pct = Math.min(12, Math.max(3, Math.round(d45.dL * 4.5)));
+              autoAdj[blackToner.code] = { pctDelta: pct, addGrams: 0 };
+            } else {
+              autoAdj['WT306'] = { pctDelta: 0, addGrams: Number((Math.min(0.8, d45.dL * 0.25) * batchScale).toFixed(3)), isSuggestedAddition: true };
+            }
+          } else if (d45.dL <= -0.45) {
+            // 시편이 차체보다 어두움 -> 블랙 감량 또는 저은폐 화이트/실버 소량 증가
+            if (blackToner && blackToner.grams > 3) {
+              const pct = -Math.min(8, Math.max(2, Math.round(Math.abs(d45.dL) * 3.5)));
+              autoAdj[blackToner.code] = { pctDelta: pct, addGrams: 0 };
+            } else if (whiteToner) {
+              const pct = Math.min(6, Math.max(2, Math.round(Math.abs(d45.dL) * 2.5)));
+              autoAdj[whiteToner.code] = { pctDelta: pct, addGrams: 0 };
+            } else if (medSilver || fineSilver) {
+              const t = medSilver || fineSilver;
+              autoAdj[t.code] = { pctDelta: 3, addGrams: 0 };
+            }
+          }
+
+          // 5) 황/청 편차 (Δb*) 보정
+          if (d45.db >= 0.40) {
+            // 시편이 더 노람(웜톤) -> 옐로우 감량 또는 블루/바이올렛 소량 추가
+            if (yellowToner && yellowToner.grams >= 0.3) {
+              autoAdj[yellowToner.code] = { pctDelta: -Math.min(15, Math.max(5, Math.round(d45.db * 10))), addGrams: 0 };
+            } else if (blueViolet) {
+              autoAdj[blueViolet.code] = { pctDelta: Math.min(15, Math.max(5, Math.round(d45.db * 10))), addGrams: 0 };
+            } else {
+              autoAdj['WT337'] = { pctDelta: 0, addGrams: Number((0.12 * batchScale).toFixed(3)), isSuggestedAddition: true };
+            }
+          } else if (d45.db <= -0.40) {
+            // 시편이 더 파람(쿨톤 과다) -> 블루 감량 또는 옐로우 소량 추가
+            if (blueViolet) {
+              autoAdj[blueViolet.code] = { pctDelta: -Math.min(15, Math.max(5, Math.round(Math.abs(d45.db) * 10))), addGrams: 0 };
+            } else if (yellowToner) {
+              autoAdj[yellowToner.code] = { pctDelta: 8, addGrams: 0 };
+            }
+          }
+
+          // 6) 적/녹 편차 (Δa*) 보정
+          if (d45.da >= 0.35) {
+            if (redToner) autoAdj[redToner.code] = { pctDelta: -8, addGrams: 0 };
+            else if (greenToner) autoAdj[greenToner.code] = { pctDelta: 8, addGrams: 0 };
+          } else if (d45.da <= -0.35) {
+            if (greenToner) autoAdj[greenToner.code] = { pctDelta: -8, addGrams: 0 };
+            else if (redToner) autoAdj[redToner.code] = { pctDelta: 8, addGrams: 0 };
+          }
+        }
+        state.adjustments = autoAdj;
+        state.lastAutoSignature = sig;
+      }
+
+      // 수정 레시피 행 계산
+      const modRows = [];
+      let origPigment = 0, origBinder = 0, modPigment = 0, modBinder = 0;
+
+      state.recipe.forEach(item => {
+        const adj = state.adjustments[item.code] || { pctDelta: 0, addGrams: 0 };
+        const pctFactor = 1 + (adj.pctDelta || 0) / 100;
+        const newGrams = Math.max(0, item.grams * pctFactor + (adj.addGrams || 0));
+        const diffGrams = newGrams - item.grams;
+
+        if (item.code === 'WT300') {
+          origBinder += item.grams;
+          modBinder += newGrams;
+        } else {
+          origPigment += item.grams;
+          modPigment += newGrams;
+        }
+
+        modRows.push({
+          code: item.code,
+          info: getTonerInfo(item.code),
+          origGrams: item.grams,
+          modGrams: newGrams,
+          diffGrams,
+          pctDelta: adj.pctDelta || 0,
+          isAddition: false,
+          shareOfPigment: totals.pigmentSum > 0 && item.code !== 'WT300' ? (item.grams / totals.pigmentSum) * 100 : 0
+        });
+      });
+
+      // 배합표에 없지만 보정용으로 신규 제안된 토너 추가
+      Object.keys(state.adjustments).forEach(code => {
+        const adj = state.adjustments[code];
+        if (adj.isSuggestedAddition && !state.recipe.some(r => r.code === code) && adj.addGrams > 0) {
+          modPigment += adj.addGrams;
+          modRows.push({
+            code,
+            info: getTonerInfo(code),
+            origGrams: 0,
+            modGrams: adj.addGrams,
+            diffGrams: adj.addGrams,
+            pctDelta: 0,
+            isAddition: true,
+            shareOfPigment: 0
+          });
+        }
+      });
+
+      // 가장 영향도가 큰 TOP1 수정안 뽑기
+      const changedRows = modRows.filter(r => Math.abs(r.diffGrams) >= 0.005)
+        .sort((a, b) => Math.abs(b.diffGrams) - Math.abs(a.diffGrams));
+
+      let top1Text = '기존 배합 유지 (수정 보류)';
+      if (changedRows.length > 0) {
+        const top = changedRows[0];
+        if (top.isAddition) {
+          top1Text = `${top.code} +${top.diffGrams.toFixed(2)}g 추가`;
+        } else {
+          top1Text = `${top.code} ${top.pctDelta > 0 ? '+' : ''}${top.pctDelta}% (${formatSigned(top.diffGrams, 2)}g)`;
+        }
+      }
+
+      return {
+        d15, d45, d105, maxDe, fiStd, fiSam, dFlop,
+        isMatteHold, isPassHold, issues, structureMatch,
+        modRows, changedRows, top1Text,
+        origPigment, origBinder, origTotal: origPigment + origBinder,
+        modPigment, modBinder, modTotal: modPigment + modBinder
+      };
+    }
+
+    function renderReport() {
+      const model = computeAnalysisModel();
+      const ang = state.reportAngle;
+      const m = state.measurements[ang];
+
+      // 1) 측색 요약 테이블
+      const cStd = calcChroma(m.std.a, m.std.b);
+      const cSam = calcChroma(m.sample.a, m.sample.b);
+      const rowsLab = [
+        { k: 'L* (명도)', sam: m.sample.L.toFixed(2), std: m.std.L.toFixed(2), diff: m.sample.L - m.std.L },
+        { k: 'a* (적+/녹-)', sam: formatSigned(m.sample.a), std: formatSigned(m.std.a), diff: m.sample.a - m.std.a },
+        { k: 'b* (황+/청-)', sam: formatSigned(m.sample.b), std: formatSigned(m.std.b), diff: m.sample.b - m.std.b },
+        { k: 'C* (채도)', sam: cSam.toFixed(2), std: cStd.toFixed(2), diff: cSam - cStd }
+      ];
+
+      document.getElementById('reportLabTableBody').innerHTML = rowsLab.map(r => `
+        <tr>
+          <td class="py-2 px-3 text-gray-300 font-sans font-semibold">${r.k}</td>
+          <td class="py-2 px-3 text-right text-white">${r.sam}</td>
+          <td class="py-2 px-3 text-right text-gray-400">${r.std}</td>
+          <td class="py-2 px-3 text-right font-bold ${Math.abs(r.diff) >= 0.4 ? 'text-amberpro' : 'text-emeraldpro'}">${formatSigned(r.diff)}</td>
+        </tr>
+      `).join('') + `
+        <tr class="bg-surface/40 border-t border-line">
+          <td colspan="3" class="py-2 px-3 text-gray-300 font-sans font-bold">${ang}° 종합 색차 (CIEDE2000 ΔE00)</td>
+          <td class="py-2 px-3 text-right font-extrabold ${ciede2000(m.std, m.sample) < 0.7 ? 'text-emeraldpro' : ciede2000(m.std, m.sample) < 1.8 ? 'text-amberpro' : 'text-rosepro'}">${ciede2000(m.std, m.sample).toFixed(2)}</td>
+        </tr>
+      `;
+
+      // 부호 기반 한 줄 해석
+      const dL = m.sample.L - m.std.L;
+      const db = m.sample.b - m.std.b;
+      const da = m.sample.a - m.std.a;
+      const lDesc = Math.abs(dL) < 0.35 ? '명도는 거의 동등하고' : dL > 0 ? '시편이 차체보다 밝고' : '시편이 차체보다 어둡고';
+      const bDesc = Math.abs(db) < 0.30 ? '황·청 밸런스는 안정적이며' : db > 0 ? '노란기(웜톤)가 높고 청색 기여가 낮으며' : '푸른기(쿨톤)가 더 강하며';
+      const aDesc = Math.abs(da) < 0.30 ? '적·녹 편차는 미미합니다.' : da > 0 ? '붉은기가 소폭 더 돌고 있습니다.' : '녹색기가 소폭 더 돌고 있습니다.';
+      document.getElementById('reportSignSummary').textContent = `${ang}° 측색 방향 분석: ${lDesc} ${bDesc} ${aDesc}`;
+
+      // 3개 요약 배지
+      const bStruct = document.getElementById('badgeStructureMatch');
+      bStruct.textContent = model.structureMatch;
+      bStruct.className = `font-mono font-extrabold ${model.structureMatch.includes('YES') ? 'text-emeraldpro' : 'text-rosepro'}`;
+
+      const bIssue = document.getElementById('badgePrimaryIssue');
+      bIssue.textContent = model.isPassHold ? '양호 (오차 허용범위)' : `${model.issues.length}개: ${model.issues.join(' / ')}`;
+      bIssue.className = `font-mono font-extrabold ${model.isPassHold ? 'text-emeraldpro' : 'text-amberpro'}`;
+
+      document.getElementById('badgeTop1Action').textContent = model.top1Text;
+
+      // 2) 시편 vs 차체 비교 분석 불릿
+      const toneBullets = [];
+      if (Math.abs(model.d45.dL) >= 0.35) {
+        toneBullets.push(model.d45.dL > 0
+          ? `시편은 차체 대비 정면(45°) 기준 <strong class="text-amberpro">ΔL* ${formatSigned(model.d45.dL)}</strong>만큼 더 밝아 명도가 떠 보입니다.`
+          : `시편은 차체 대비 정면(45°) 기준 <strong class="text-cyanpro">ΔL* ${formatSigned(model.d45.dL)}</strong>만큼 약간 더 어둡게 측정됩니다.`);
+      } else {
+        toneBullets.push(`정면(45°) 명도 편차가 <strong class="text-emeraldpro">${formatSigned(model.d45.dL)}</strong>로 차체와 매우 근접합니다.`);
+      }
+
+      if (Math.abs(model.d45.db) >= 0.30) {
+        toneBullets.push(model.d45.db > 0
+          ? `차체는 시편보다 미세하게 <strong class="text-cyanpro">푸른(쿨톤) 기운</strong>이 돌며, 시편은 상대적으로 황색기(<strong class="text-amberpro">Δb* ${formatSigned(model.d45.db)}</strong>)가 올라와 있습니다.`
+          : `시편에 <strong class="text-cyanpro">청색(쿨톤) 기운</strong>이 차체보다 강합니다 (Δb* ${formatSigned(model.d45.db)}).`);
+      } else {
+        toneBullets.push(`황/청(b*) 및 적/녹(a*) 색상은 기준 오차 이내로 안정적입니다.`);
+      }
+      document.getElementById('compareToneBullets').innerHTML = toneBullets.map(t => `<li>${t}</li>`).join('');
+
+      const flopBullets = [];
+      if (model.d105.dL >= 0.65) {
+        flopBullets.push(`측면(105°) 명도가 <strong class="text-amberpro">ΔL* ${formatSigned(model.d105.dL)}</strong>로 시편 측면이 밝고 <strong>메탈릭이 떠 보이는(Flop 과다)</strong> 경향이 뚜렷합니다.`);
+      } else if (model.d105.dL <= -0.65) {
+        flopBullets.push(`측면(105°) 명도가 <strong class="text-cyanpro">ΔL* ${formatSigned(model.d105.dL)}</strong>로 차체보다 측면이 어둡게 떨어집니다.`);
+      } else {
+        flopBullets.push(`측면(105°) 플롭 밝기 연결이 자연스럽습니다 (ΔL* ${formatSigned(model.d105.dL)}, 플롭차 ${formatSigned(model.dFlop)}).`);
+      }
+
+      if (model.d15.dSparkle >= 0.8) {
+        flopBullets.push(`정면 하이라이트(15°) 입자 분석상 시편의 <strong>스파클 반짝임이 차체보다 크고 거친 편</strong>입니다 (+${model.d15.dSparkle.toFixed(1)}). 입자 크기를 한 단계 줄이거나 대입자 메탈릭 감량이 필요합니다.`);
+      } else if (model.d15.dSparkle <= -0.8) {
+        flopBullets.push(`차체 펄/메탈릭 입자가 시편보다 더 선명하게 반짝입니다 (${model.d15.dSparkle.toFixed(1)}).`);
+      } else {
+        flopBullets.push(`15° 하이라이트 입자 밀도 및 반사감 차이가 크지 않아 구조 매칭이 양호합니다.`);
+      }
+      document.getElementById('compareFlopBullets').innerHTML = flopBullets.map(t => `<li>${t}</li>`).join('');
+
+      // 3) ① 수정 레스피 테이블
+      document.getElementById('modRecipeTableBody').innerHTML = model.modRows.map(r => {
+        const isChanged = Math.abs(r.diffGrams) >= 0.005;
+        const changeLabel = !isChanged
+          ? '<span class="text-gray-500 font-sans">유지</span>'
+          : r.isAddition
+            ? `<span class="text-emeraldpro font-bold">+${r.diffGrams.toFixed(3)}g</span>`
+            : `<span class="${r.diffGrams > 0 ? 'text-emeraldpro' : 'text-rosepro'} font-bold">${r.pctDelta > 0 ? '+' : ''}${r.pctDelta}%</span>`;
+
+        return `
+          <tr class="${isChanged ? 'bg-cyanpro/5' : ''}">
+            <td class="py-2 px-2.5">
+              <div class="flex items-center gap-1.5">
+                ${renderTonerIconHtml(r.info)}
+                <div>
+                  <div class="font-bold text-white">${r.code}</div>
+                  <div class="text-[9px] text-gray-400 font-sans truncate max-w-[95px]">${r.info.kr}</div>
+                </div>
+              </div>
+            </td>
+            <td class="py-2 px-2 text-right text-gray-400">${r.origGrams.toFixed(3)} g</td>
+            <td class="py-2 px-2 text-right font-bold ${isChanged ? 'text-cyanpro' : 'text-gray-200'}">${r.modGrams.toFixed(3)} g</td>
+            <td class="py-2 px-2 text-right">${changeLabel}</td>
+            <td class="py-2 px-2">
+              <div class="flex items-center justify-center gap-1">
+                <button onclick="nudgeTonerAdjustment('${r.code}', -1, ${r.isAddition})" class="w-6 h-6 rounded-lg bg-surface hover:bg-line text-white font-bold flex items-center justify-center border border-line">−</button>
+                <button onclick="nudgeTonerAdjustment('${r.code}', 1, ${r.isAddition})" class="w-6 h-6 rounded-lg bg-surface hover:bg-line text-white font-bold flex items-center justify-center border border-line">+</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      const diffPigment = model.modPigment - model.origPigment;
+      const diffTotal = model.modTotal - model.origTotal;
+      document.getElementById('modRecipeTableFooter').innerHTML = `
+        <tr class="text-gray-300">
+          <td class="py-2 px-2.5 font-sans">조색제 합계</td>
+          <td class="py-2 px-2 text-right">${model.origPigment.toFixed(3)} g</td>
+          <td class="py-2 px-2 text-right text-white">${model.modPigment.toFixed(3)} g</td>
+          <td class="py-2 px-2 text-right ${Math.abs(diffPigment) > 0.004 ? 'text-amberpro' : 'text-gray-500'}">${formatSigned(diffPigment, 3)} g</td>
+          <td></td>
+        </tr>
+        <tr class="text-gray-300 border-t border-line/60">
+          <td class="py-2 px-2.5 font-sans">바인더/수지</td>
+          <td class="py-2 px-2 text-right">${model.origBinder.toFixed(3)} g</td>
+          <td class="py-2 px-2 text-right text-white">${model.modBinder.toFixed(3)} g</td>
+          <td class="py-2 px-2 text-right text-gray-500 font-sans">유지</td>
+          <td></td>
+        </tr>
+        <tr class="text-cyanpro border-t border-line">
+          <td class="py-2.5 px-2.5 font-sans">총량</td>
+          <td class="py-2.5 px-2 text-right">${model.origTotal.toFixed(3)} g</td>
+          <td class="py-2.5 px-2 text-right">${model.modTotal.toFixed(3)} g</td>
+          <td class="py-2.5 px-2 text-right">${formatSigned(diffTotal, 3)} g</td>
+          <td></td>
+        </tr>
+      `;
+
+      // 4) ② 토너 특성 및 보정 근거 가이드 카드
+      renderRationaleCards(model);
+
+      // 5) ③ 3존 예상 변화 테이블
+      renderThreeZonePredictions(model);
+
+      // 6) ④ Engineer Action
+      renderEngineerAction(model);
+    }
+
+    function nudgeTonerAdjustment(code, dir, isAddition) {
+      if (!state.adjustments[code]) {
+        state.adjustments[code] = { pctDelta: 0, addGrams: 0, isSuggestedAddition: isAddition };
+      }
+      if (isAddition) {
+        state.adjustments[code].addGrams = Math.max(0, Number(((state.adjustments[code].addGrams || 0) + dir * 0.05).toFixed(3)));
+      } else {
+        state.adjustments[code].pctDelta = Math.max(-30, Math.min(30, (state.adjustments[code].pctDelta || 0) + dir));
+      }
+      renderReport();
+    }
+
+    function resetAutoAdjustments() {
+      state.lastAutoSignature = '';
+      renderReport();
+      showToast('측색 데이터 기준 자동 보정안으로 초기화했습니다.', 'info');
+    }
+
+    function renderRationaleCards(model) {
+      const container = document.getElementById('rationaleCardsContainer');
+      const cards = [];
+
+      if (model.changedRows.length === 0) {
+        cards.push(`
+          <div class="sm:col-span-2 bg-obsidian border border-emeraldpro/30 rounded-xl p-3 space-y-1.5">
+            <div class="text-xs font-extrabold text-emeraldpro">✓ 현재 배합 골격 안정</div>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              전 각도 색차가 허용 오차 범위이거나 클리어 표면 반사 영향이 더 큰 상태입니다. 불필요한 0.1g 단위 미조색은 오히려 이색을 유발할 수 있으므로 현 배합을 유지하는 것이 안전합니다.
+            </p>
+          </div>
+        `);
+      } else {
+        // 변경된 토너별 상세 특성 카드 생성
+        model.changedRows.slice(0, 3).forEach(r => {
+          const isReducing = r.diffGrams < 0;
+          let extraNote = r.info.desc;
+
+          // 고비중 화이트 감량 시 은폐력 경고 (IMG_5801 참고)
+          if (r.info.type === 'white' && isReducing && r.shareOfPigment >= 30) {
+            extraNote = `${r.code}은 조색제의 <strong class="text-amberpro">${r.shareOfPigment.toFixed(1)}%</strong>를 차지합니다. 감량하면 백색 산란 기여가 줄어 작업면이 어두워지지만, <strong class="text-rosepro">은폐력에도 영향</strong>을 줄 수 있으므로 도막 두께와 도장 횟수를 함께 관리해야 합니다.`;
+          } else if (r.code === 'WT320' || r.code === 'WT321') {
+            extraNote = `정면을 어둡게, 측면(105°)을 더 밝게 만드는 초소형 메탈릭입니다. 양이 많으면 측면이 밝아지고 메탈릭이 떠 보이므로 측면 밝기 과다 제어의 핵심 토너입니다.`;
+          } else if (r.code === 'WT324' || r.code === 'WT326') {
+            extraNote = `큰 입자로 정면(15°) 스파클이 강하게 튑니다. 과하면 표면이 거칠고 과하게 반짝이므로 정면 스파클만 잡을 만큼 소폭(2~5%) 감량하는 것이 정석입니다.`;
+          }
+
+          cards.push(`
+            <div class="bg-obsidian border border-line rounded-xl p-3 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-extrabold text-white flex items-center gap-1.5">
+                  ${renderTonerIconHtml(r.info)} ${r.code} (${r.info.kr})
+                </span>
+                <span class="text-[11px] font-mono font-bold ${isReducing ? 'text-rosepro' : 'text-emeraldpro'}">
+                  ${r.isAddition ? '+' + r.diffGrams.toFixed(2) + 'g' : (r.pctDelta > 0 ? '+' : '') + r.pctDelta + '%'}
+                </span>
+              </div>
+              <p class="text-[11px] text-gray-300 leading-relaxed">${extraNote}</p>
+            </div>
+          `);
+        });
+
+        // 전체 보정 방향 요약 카드 추가
+        const summaryLines = model.changedRows.map(r => {
+          const dirTxt = r.diffGrams < 0 ? '감량' : '증량/추가';
+          return `• <strong class="text-cyanpro">${r.code}</strong> ${dirTxt}: ${formatSigned(r.diffGrams, 3)}g (${r.info.kr})`;
+        }).join('<br>');
+
+        cards.push(`
+          <div class="bg-obsidian border border-cyanpro/30 rounded-xl p-3 space-y-1.5">
+            <div class="text-xs font-extrabold text-cyanpro">📌 전체 보정 비율 가이드</div>
+            <div class="text-[11px] text-gray-200 leading-relaxed">${summaryLines}</div>
+          </div>
+        `);
+      }
+
+      container.innerHTML = cards.join('');
+    }
+
+    function renderThreeZonePredictions(model) {
+      const hasWhiteReduce = model.changedRows.some(r => r.info.type === 'white' && r.diffGrams < 0);
+      const hasFineReduce = model.changedRows.some(r => (r.code === 'WT320' || r.code === 'WT321') && r.diffGrams < 0);
+      const hasCoarseReduce = model.changedRows.some(r => (r.code === 'WT324' || r.code === 'WT326') && r.diffGrams < 0);
+      const hasBlackAdd = model.changedRows.some(r => r.info.type === 'black' && r.diffGrams > 0);
+      const hasBlueAdd = model.changedRows.some(r => (r.code === 'WT330' || r.code === 'WT334' || r.code === 'WT337') && r.diffGrams > 0);
+      const hasYellowReduce = model.changedRows.some(r => (r.code === 'WT350' || r.code === 'WT354') && r.diffGrams < 0);
+
+      let p45 = '기존 도막 구조 유지. 은폐력 및 정면 밸런스 안정.';
+      let p105 = '측면 명도 큰 변화 없음. 차체 인접면 연결 유지.';
+      let p15 = '정면 하이라이트 색상 및 반사감 현 수준 유지.';
+
+      if (model.changedRows.length > 0) {
+        if (hasWhiteReduce) {
+          p45 = '솔리드/베이스 구조 유지. 백색 감량으로 은폐력 소폭 감소 가능 (웨트 도장 1회 추가 관리 권장).';
+          p105 = '백색 산란 기여 감소 → 작업면 명도 소폭 하락하며 차체와 밀착.';
+        } else if (hasFineReduce || hasCoarseReduce) {
+          p45 = `메탈릭 입자 밸런스 정돈.${hasCoarseReduce ? ' 거친 스파클 완화 및 차체 미세 입자감에 근접.' : ''}`;
+          p105 = hasFineReduce
+            ? '초소형 메탈릭 감량 → 측면(105°) 밝기 과다와 메탈릭 뜸 현상 효과적 억제.'
+            : '측면 플롭 명도 안정화.';
+        } else if (hasBlackAdd) {
+          p45 = '베이스 그레이/블랙 심도 증가 → 정면 붕 뜬 밝기 차분하게 억제.';
+          p105 = '측면 명도 소폭 하강하며 차체 깊이와 조화.';
+        }
+
+        if (hasBlueAdd || hasYellowReduce) {
+          p15 = '노란기 억제 및 미세 쿨톤(블루/바이올렛) 보강 → 햇빛 정면 톤 이질감 해소.';
+        } else if (hasCoarseReduce) {
+          p15 = '정면 하이라이트에서 과하게 튀는 반짝임 억제 및 색상 순도 상승.';
+        } else if (hasWhiteReduce) {
+          p15 = '백색 비중 감소로 유색 토너의 본래 색상감이 상대적으로 더 선명하게 드러남.';
+        }
+      }
+
+      document.getElementById('threeZonePredictionBody').innerHTML = `
+        <tr>
+          <td class="py-2.5 px-3 font-mono font-bold text-cyanpro">45° Structure</td>
+          <td class="py-2.5 px-3 text-gray-200 leading-relaxed">${p45}</td>
+        </tr>
+        <tr>
+          <td class="py-2.5 px-3 font-mono font-bold text-amberpro">105° Value</td>
+          <td class="py-2.5 px-3 text-gray-200 leading-relaxed">${p105}</td>
+        </tr>
+        <tr>
+          <td class="py-2.5 px-3 font-mono font-bold text-emeraldpro">15° Hue</td>
+          <td class="py-2.5 px-3 text-gray-200 leading-relaxed">${p15}</td>
+        </tr>
+      `;
+    }
+
+    function renderEngineerAction(model) {
+      const badge = document.getElementById('engineerStatusBadge');
+      const title = document.getElementById('engineerActionTitle');
+      const detail = document.getElementById('engineerActionDetail');
+      const oneLiner = document.getElementById('engineerOneLiner');
+      const vLabel = `${state.vehicle.brand} ${state.vehicle.model} (${state.vehicle.colorCode})`;
+
+      if (model.isMatteHold) {
+        badge.textContent = '무광 · 수정 보류';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emeraldpro/15 text-emeraldpro border border-emeraldpro/40';
+        title.textContent = '현재 추천: 기존 배합 유지, 토너 0.1g 수정 보류.';
+        detail.textContent = '무광 클리어 도장면에서 가장 중요한 검토 항목은 토너 색차보다 무광 클리어의 표면 반사(광택도) 차이입니다. 추가 비교가 필요하다면 직사광보다 균일한 확산광 아래에서 인접 패널 경계를 재촬영하는 것이 좋습니다.';
+        oneLiner.textContent = `${vLabel} 무광 도장은 현재 색차(45° ΔE00 ${model.d45.dE.toFixed(2)})가 양호하므로 추가 미조색보다 기존 배합 및 클리어 토출 조건 유지가 적절합니다.`;
+      } else if (model.isPassHold || model.changedRows.length === 0) {
+        badge.textContent = '매칭 양호 · 유지';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emeraldpro/15 text-emeraldpro border border-emeraldpro/40';
+        title.textContent = '현재 추천: 기존 배합 유지 (현장 본도장 진행 가능).';
+        detail.textContent = `전 각도 최대 색차가 ΔE00 ${model.maxDe.toFixed(2)}로 보수도장 블렌딩 허용 기준 이내입니다. 스프레이 건 압력(하이텍 드롭코트 포함)만 일정하게 유지하면 경계 이색 없이 마무리됩니다.`;
+        oneLiner.textContent = `${vLabel}는 추가 조색 없이 기존 배합 그대로 도장 및 드롭코트 마감 진행을 권장합니다.`;
+      } else {
+        badge.textContent = '조색 보정 권장';
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amberpro/15 text-amberpro border border-amberpro/40';
+        title.textContent = `현재 추천: 수정안 (${model.top1Text} 중심) 반영 후 테스트 시편 재확인.`;
+        detail.textContent = `45° ΔE00 ${model.d45.dE.toFixed(2)} / 105° ΔE00 ${model.d105.dE.toFixed(2)} 편차가 확인되었습니다. 위 ① 수정 레스피를 기준으로 100g 소량 조색 후, 본도장과 동일한 에어압·드롭코트 조건으로 시편을 뿌려 45°와 105° 경계를 재검증하세요.`;
+        oneLiner.textContent = `${vLabel}는 ${model.issues.join('·')} 편차 보정을 위해 '${model.top1Text}'을 우선 적용하는 방향이 가장 안전합니다.`;
+      }
+    }
+
+    function copyReportText() {
+      const model = computeAnalysisModel();
+      const lines = [
+        `[HI-TEC MATCH PRO 조색 분석 리포트]`,
+        `차량/컬러: ${state.vehicle.brand} ${state.vehicle.model} | ${state.vehicle.colorCode} ${state.vehicle.colorName}`,
+        `도장방식: ${state.vehicle.finish === 'matte' ? '무광 클리어' : state.vehicle.finish === 'pearl3' ? '3코트 펄' : '유광 클리어'}`,
+        `----------------------------------------`,
+        `■ 3각도 색차 (시편 - 기준)`,
+        `- 15°: ΔL ${formatSigned(model.d15.dL)} | Δa ${formatSigned(model.d15.da)} | Δb ${formatSigned(model.d15.db)} | ΔE00 ${model.d15.dE.toFixed(2)}`,
+        `- 45°: ΔL ${formatSigned(model.d45.dL)} | Δa ${formatSigned(model.d45.da)} | Δb ${formatSigned(model.d45.db)} | ΔE00 ${model.d45.dE.toFixed(2)}`,
+        `- 105°: ΔL ${formatSigned(model.d105.dL)} | Δa ${formatSigned(model.d105.da)} | Δb ${formatSigned(model.d105.db)} | ΔE00 ${model.d105.dE.toFixed(2)}`,
+        `■ 판정: StructureMatch=${model.structureMatch} | TOP1=${model.top1Text}`,
+        `----------------------------------------`,
+        `■ 수정 레스피 (Permahyd Hi-TEC)`
+      ];
+      model.modRows.forEach(r => {
+        const diffTxt = Math.abs(r.diffGrams) < 0.005 ? '유지' : `${formatSigned(r.diffGrams, 3)}g`;
+        lines.push(`- ${r.code} (${r.info.kr}): ${r.origGrams.toFixed(3)}g → ${r.modGrams.toFixed(3)}g [${diffTxt}]`);
+      });
+      lines.push(`- 총량: ${model.origTotal.toFixed(3)}g → ${model.modTotal.toFixed(3)}g`);
+      lines.push(`----------------------------------------`);
+      lines.push(`■ 결론: ${document.getElementById('engineerOneLiner').textContent}`);
+
+      const text = lines.join('\n');
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('분석 리포트 텍스트가 클립보드에 복사되었습니다.', 'success');
+      } catch (e) {
+        showToast('복사에 실패했습니다. 수동으로 선택해 주세요.', 'error');
+      }
+      document.body.removeChild(ta);
+    }
+
+    /* =====================================================================
+       11. TAB 4: LocalStorage 작업 이력 관리 (저장 / 복원 / 삭제 / JSON)
+       ===================================================================== */
+    function getArchive() {
+      try {
+        return JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function saveArchive(list) {
+      localStorage.setItem(ARCHIVE_KEY, JSON.stringify(list));
+    }
+
+    function saveCurrentSessionToArchive() {
+      const model = computeAnalysisModel();
+      const entry = {
+        id: 'job_' + Date.now(),
+        timestamp: new Date().toLocaleString('ko-KR', { hour12: false }),
+        vehicle: JSON.parse(JSON.stringify(state.vehicle)),
+        measurements: JSON.parse(JSON.stringify(state.measurements)),
+        recipe: JSON.parse(JSON.stringify(state.recipe)),
+        adjustments: JSON.parse(JSON.stringify(state.adjustments)),
+        summary: {
+          de45: Number(model.d45.dE.toFixed(2)),
+          maxDe: Number(model.maxDe.toFixed(2)),
+          top1: model.top1Text,
+          issues: model.issues.join(' / ') || '양호'
+        }
+      };
+
+      const list = getArchive();
+      list.unshift(entry);
+      saveArchive(list.slice(0, 60)); // 최대 60건 유지
+      renderArchiveList();
+      showToast(`${state.vehicle.colorCode} 작업 이력이 저장되었습니다.`, 'success');
+    }
+
+    function renderArchiveList() {
+      const container = document.getElementById('archiveListContainer');
+      const q = (document.getElementById('archiveSearchInput').value || '').trim().toLowerCase();
+      const list = getArchive().filter(item => {
+        if (!q) return true;
+        const hay = `${item.vehicle.brand} ${item.vehicle.model} ${item.vehicle.colorCode} ${item.vehicle.colorName} ${item.summary.top1}`.toLowerCase();
+        return hay.includes(q);
+      });
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 bg-obsidian rounded-xl border border-line border-dashed space-y-2">
+            <div class="text-2xl">📂</div>
+            <div class="text-xs font-bold text-gray-300">저장된 조색 이력이 없습니다.</div>
+            <div class="text-[11px] text-gray-500">분석 리포트 하단의 [작업 이력 저장] 버튼을 눌러 기록을 남겨보세요.</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div class="bg-obsidian border border-line rounded-xl p-3 space-y-2.5 hover:border-cyanpro/40 transition">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface text-cyanpro border border-line">${item.vehicle.brand}</span>
+                <span class="text-xs font-extrabold text-white">${item.vehicle.colorCode} ${item.vehicle.colorName}</span>
+              </div>
+              <div class="text-[11px] text-gray-400 mt-0.5">${item.vehicle.model} · ${item.timestamp}</div>
+            </div>
+            <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full shrink-0 ${item.summary.de45 < 0.7 ? 'bg-emeraldpro/15 text-emeraldpro' : item.summary.de45 < 1.8 ? 'bg-amberpro/15 text-amberpro' : 'bg-rosepro/15 text-rosepro'}">
+              45° ΔE ${item.summary.de45.toFixed(2)}
+            </span>
+          </div>
+
+          <div class="bg-card border border-line/70 rounded-lg px-2.5 py-1.5 flex items-center justify-between text-[11px]">
+            <span class="text-gray-400">TOP1 보정안</span>
+            <span class="font-mono font-bold text-cyanpro">${item.summary.top1}</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="loadArchiveItem('${item.id}')" class="py-1.5 rounded-lg bg-cyanpro/15 hover:bg-cyanpro/25 text-cyanpro text-xs font-bold border border-cyanpro/30 transition">
+              불러오기
+            </button>
+            <button onclick="requestDeleteArchiveItem('${item.id}')" class="py-1.5 rounded-lg bg-surface hover:bg-rosepro/20 text-gray-400 hover:text-rosepro text-xs font-bold border border-line transition">
+              삭제
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function loadArchiveItem(id) {
+      const item = getArchive().find(x => x.id === id);
+      if (!item) return;
+      state.vehicle = JSON.parse(JSON.stringify(item.vehicle));
+      state.measurements = JSON.parse(JSON.stringify(item.measurements));
+      state.recipe = JSON.parse(JSON.stringify(item.recipe));
+      state.adjustments = JSON.parse(JSON.stringify(item.adjustments));
+      state.lastAutoSignature = 'LOCKED_FROM_ARCHIVE';
+
+      // UI 동기화
+      document.getElementById('inputModel').value = state.vehicle.model;
+      document.getElementById('selectFinishType').value = state.vehicle.finish;
+      document.getElementById('selectColorPreset').value = COLOR_PRESETS[state.vehicle.colorCode] ? state.vehicle.colorCode : 'CUSTOM';
+      setBrand(state.vehicle.brand, true);
+      renderRecipeTable();
+      renderSpectroInputs();
+      updateHeaderBadge();
+      switchTab('report');
+      showToast(`${item.vehicle.colorCode} 작업 이력을 복원했습니다.`, 'success');
+    }
+
+    function requestDeleteArchiveItem(id) {
+      openConfirmModal('작업 이력 삭제', '선택한 조색 기록을 영구적으로 삭제하시겠습니까?', () => {
+        const next = getArchive().filter(x => x.id !== id);
+        saveArchive(next);
+        renderArchiveList();
+        showToast('작업 이력이 삭제되었습니다.', 'info');
+      });
+    }
+
+    function exportArchiveJson() {
+      const data = getArchive();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hitec-match-archive-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('작업 이력 JSON 파일이 다운로드됩니다.', 'success');
+    }
+
+    function importArchiveJson(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!Array.isArray(parsed)) throw new Error('Invalid format');
+          const merged = [...parsed, ...getArchive()].slice(0, 100);
+          saveArchive(merged);
+          renderArchiveList();
+          showToast(`${parsed.length}건의 작업 이력을 가져왔습니다.`, 'success');
+        } catch {
+          showToast('올바른 JSON 이력 파일이 아닙니다.', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    /* =====================================================================
+       12. UI 컨트롤, 탭 전환, 모달 & 토스트 유틸리티
+       ===================================================================== */
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-cyanpro');
+        btn.classList.add('text-gray-400');
+      });
+      const activeBtn = document.getElementById(`nav-${tabName}`);
+      activeBtn.classList.remove('text-gray-400');
+      activeBtn.classList.add('text-cyanpro');
+
+      if (tabName === 'capture') {
+        setTimeout(analyzePhotoCanvasAndDraw, 30);
+      } else if (tabName === 'recipe') {
+        renderRecipeTable();
+      } else if (tabName === 'report') {
+        renderReport();
+      } else if (tabName === 'archive') {
+        renderArchiveList();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setMeasureMode(mode) {
+      state.measureMode = mode;
+      const btnP = document.getElementById('btnModePhoto');
+      const btnS = document.getElementById('btnModeSpectro');
+      const panP = document.getElementById('panelModePhoto');
+      const panS = document.getElementById('panelModeSpectro');
+
+      if (mode === 'photo') {
+        btnP.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 bg-cyanpro/15 text-cyanpro border border-cyanpro/40';
+        btnS.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 text-gray-400 hover:text-gray-200 border border-transparent';
+        panP.classList.remove('hidden');
+        panS.classList.add('hidden');
+        setTimeout(analyzePhotoCanvasAndDraw, 30);
+      } else {
+        btnS.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 bg-cyanpro/15 text-cyanpro border border-cyanpro/40';
+        btnP.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 text-gray-400 hover:text-gray-200 border border-transparent';
+        panS.classList.remove('hidden');
+        panP.classList.add('hidden');
+        renderSpectroInputs();
+      }
+    }
+
+    function setPhotoLayout(layout) {
+      state.photoLayout = layout;
+      const b1 = document.getElementById('btnShotOne');
+      const b2 = document.getElementById('btnShotMulti');
+      const mTabs = document.getElementById('multiAngleTabs');
+
+      if (layout === 'oneshot') {
+        b1.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-surface text-cyanpro border border-cyanpro/30 transition';
+        b2.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-gray-400 hover:text-white transition';
+        mTabs.classList.add('hidden');
+      } else {
+        b2.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-surface text-cyanpro border border-cyanpro/30 transition';
+        b1.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-gray-400 hover:text-white transition';
+        mTabs.classList.remove('hidden');
+        state.activePinKey = `${state.activeUploadAngle}_std`;
+      }
+      renderPinSelectorGrid();
+      analyzePhotoCanvasAndDraw();
+    }
+
+    function selectUploadAngle(ang) {
+      state.activeUploadAngle = ang;
+      state.activePinKey = `${ang}_std`;
+      ['15', '45', '105'].forEach(a => {
+        const el = document.getElementById(`btnUploadAngle${a}`);
+        el.className = a === ang
+          ? 'py-2 px-2 rounded-xl text-xs font-bold bg-cyanpro/15 text-cyanpro border border-cyanpro/40'
+          : 'py-2 px-2 rounded-xl text-xs font-bold bg-surface text-gray-400 border border-line';
+      });
+      renderPinSelectorGrid();
+      analyzePhotoCanvasAndDraw();
+    }
+
+    function renderPinSelectorGrid() {
+      const grid = document.getElementById('pinSelectorGrid');
+      const keys = state.photoLayout === 'oneshot'
+        ? Object.keys(state.pins)
+        : [`${state.activeUploadAngle}_std`, `${state.activeUploadAngle}_sample`];
+
+      grid.innerHTML = keys.map(k => {
+        const p = state.pins[k];
+        const active = k === state.activePinKey;
+        return `
+          <button onclick="selectActivePin('${k}')" class="py-1.5 px-2 rounded-xl text-[11px] font-mono font-bold border transition flex items-center justify-center gap-1.5 ${active ? 'bg-surface text-white border-cyanpro shadow-sm' : 'bg-obsidian text-gray-400 border-line hover:text-gray-200'}">
+            <span class="w-2 h-2 rounded-full" style="background:${p.color}"></span>
+            <span>${p.label}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectActivePin(key) {
+      state.activePinKey = key;
+      renderPinSelectorGrid();
+      analyzePhotoCanvasAndDraw();
+    }
+
+    function updateRoiRadius(val) {
+      state.roiRadius = parseInt(val, 10) || 22;
+      document.getElementById('roiRadiusValue').textContent = `${state.roiRadius}px`;
+      analyzePhotoCanvasAndDraw();
+    }
+
+    function setReportAngle(ang) {
+      state.reportAngle = ang;
+      ['45', '15', '105'].forEach(a => {
+        const el = document.getElementById(`repAngle${a}`);
+        el.className = a === ang
+          ? 'px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-cyanpro/20 text-cyanpro'
+          : 'px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold text-gray-400';
+      });
+      renderReport();
+    }
+
+    function updateHeaderBadge() {
+      const dE45 = ciede2000(state.measurements['45'].std, state.measurements['45'].sample);
+      document.getElementById('headerColorLabel').textContent = `${state.vehicle.brand} ${state.vehicle.colorCode}`;
+      const deEl = document.getElementById('headerDeltaE');
+      deEl.textContent = dE45.toFixed(2);
+      deEl.className = `text-[11px] font-mono font-bold tabular-nums ${dE45 < 0.7 ? 'text-emeraldpro' : dE45 < 1.8 ? 'text-amberpro' : 'text-rosepro'}`;
+    }
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const colorClass = type === 'success'
+        ? 'border-emeraldpro/50 bg-[#0D201B] text-emeraldpro'
+        : type === 'error'
+          ? 'border-rosepro/50 bg-[#251016] text-rosepro'
+          : 'border-cyanpro/50 bg-[#0D1E26] text-cyanpro';
+
+      toast.className = `px-3.5 py-2.5 rounded-xl border text-xs font-bold shadow-xl backdrop-blur-md transition-all duration-300 ${colorClass}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-6px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 2400);
+    }
+
+    let confirmCallback = null;
+    function openConfirmModal(title, message, onConfirm) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalMessage').textContent = message;
+      confirmCallback = onConfirm;
+      document.getElementById('confirmModal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').classList.add('hidden');
+      confirmCallback = null;
+    }
+
+    document.getElementById('confirmModalOkBtn').addEventListener('click', () => {
+      if (confirmCallback) confirmCallback();
+      closeConfirmModal();
+    });
+
+    /* =====================================================================
+       13. 초기화 (DOMContentLoaded)
+       ===================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      applyColorPreset('1J7', true);
+      renderPinSelectorGrid();
+      setupCanvasPointerEvents();
+      renderSpectroInputs();
+      loadSyntheticDemoImage();
+
+      // 화면 리사이즈 시 캔버스 재렌더링
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          if (state.activeTab === 'capture' && state.measureMode === 'photo') {
+            analyzePhotoCanvasAndDraw();
+          }
+        }, 150);
+      });
+    });
+  </script>
+</body>
+</html>
