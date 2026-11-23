@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="조색냥이" />
   <meta name="theme-color" content="#0b0e14" />
-  <title>조색냥이 🐾 | 렉서스·토요타 × 스피스해커 하이텍 색상매치</title>
+  <title>조색냥이 Beta v3.0 🐾 | 렉서스·토요타 × 스피스해커 하이텍 색상매치</title>
   <style>
     :root {
       --bg: #0b0e14;
@@ -26,7 +26,10 @@
       --amber-dim: rgba(245, 158, 11, 0.15);
       --rose: #f43f5e;
       --rose-dim: rgba(244, 63, 94, 0.15);
+      --violet: #a78bfa;
+      --violet-dim: rgba(167, 139, 250, 0.16);
       --radius: 14px;
+      --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 16px);
     }
 
@@ -41,17 +44,21 @@
       overflow-x: hidden;
     }
 
-    /* Header */
+    /* Header — iOS Safari 홈화면 PWA 상단 노치/다이나믹 아일랜드 가림 완벽 방지 */
     .app-header {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(11, 14, 20, 0.94);
+      background: rgba(11, 14, 20, 0.96);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
-      padding: 10px 14px;
+      padding: calc(12px + var(--safe-top)) 14px 10px 14px;
       display: flex; align-items: center; justify-content: space-between;
       gap: 8px;
     }
+    body.ios-standalone .app-header {
+      padding-top: max(54px, calc(14px + var(--safe-top)));
+    }
+
     .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .brand-logo {
       width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
@@ -59,11 +66,16 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 21px; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
     }
-    .brand-title { font-size: 16.5px; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .brand-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
     .brand-sub { font-size: 11px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .badge-pill {
       font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
       background: var(--primary-dim); color: var(--primary); border: 1px solid rgba(56,189,248,0.3);
+      white-space: nowrap;
+    }
+    .badge-beta {
+      font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px;
+      background: var(--violet-dim); color: #ddd6fe; border: 1px solid rgba(167,139,250,0.4);
       white-space: nowrap;
     }
 
@@ -71,13 +83,13 @@
     .container {
       max-width: 780px;
       margin: 0 auto;
-      padding: 12px 12px calc(86px + var(--safe-bottom));
+      padding: 12px 12px calc(88px + var(--safe-bottom));
     }
 
     /* Bottom Navigation */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
-      background: rgba(18, 23, 34, 0.96);
+      background: rgba(18, 23, 34, 0.97);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid var(--border);
@@ -105,6 +117,10 @@
       padding: 14px;
       margin-bottom: 12px;
     }
+    .card-highlight {
+      border-color: rgba(16, 185, 129, 0.45);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.06), var(--surface));
+    }
     .card-header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 10px; gap: 8px; flex-wrap: wrap;
@@ -122,9 +138,10 @@
     }
     .btn:active { transform: scale(0.97); }
     .btn-primary { background: linear-gradient(135deg, #0284c7, #2563eb); border-color: #38bdf8; color: #fff; }
-    .btn-emerald { background: rgba(16, 185, 129, 0.2); border-color: var(--emerald); color: #6ee7b7; }
+    .btn-emerald { background: rgba(16, 185, 129, 0.22); border-color: var(--emerald); color: #6ee7b7; }
     .btn-amber { background: rgba(245, 158, 11, 0.18); border-color: var(--amber); color: #fcd34d; }
     .btn-rose { background: rgba(244, 63, 94, 0.18); border-color: var(--rose); color: #fda4af; }
+    .btn-violet { background: rgba(167, 139, 250, 0.2); border-color: var(--violet); color: #ddd6fe; }
     .btn-sm { padding: 5px 9px; font-size: 11.5px; min-height: 30px; border-radius: 8px; }
     .btn-block { width: 100%; }
 
@@ -133,6 +150,7 @@
       border-radius: 9px; padding: 8px 10px; font-size: 13px; width: 100%;
       font-family: inherit;
     }
+    input[type="color"] { padding: 2px 4px; height: 36px; cursor: pointer; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -156,7 +174,7 @@
       background: #07090d; border: 1px solid var(--border);
       touch-action: none; user-select: none; -webkit-user-select: none;
     }
-    #photoCanvas { width: 100%; height: auto; display: block; }
+    .canvas-wrap canvas.main-view { width: 100%; height: auto; display: block; }
     .loupe {
       position: absolute; width: 104px; height: 104px; border-radius: 50%;
       border: 3px solid #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.8);
@@ -245,6 +263,7 @@
     }
     .mini-tag.warn { background: var(--rose-dim); color: #fda4af; }
     .mini-tag.gold { background: var(--amber-dim); color: #fcd34d; }
+    .mini-tag.custom { background: var(--violet-dim); color: #ddd6fe; border: 1px solid rgba(167,139,250,0.35); }
 
     /* Report Styles */
     .report-hero {
@@ -270,19 +289,32 @@
       display: inline-flex; align-items: center; justify-content: center; font-size: 13px;
     }
 
+    /* 2nd Spray-out Verification Swatch Bar */
+    .verify-compare-bar {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0;
+    }
+    .verify-swatch-box {
+      border-radius: 10px; padding: 10px 8px; text-align: center;
+      border: 1px solid rgba(255,255,255,0.18); font-size: 11.5px; font-weight: 800;
+    }
+    .grade-pill {
+      display: inline-block; padding: 4px 10px; border-radius: 999px;
+      font-size: 12px; font-weight: 900;
+    }
+
     /* Live Camera Modal */
     .modal-backdrop {
       position: fixed; inset: 0; z-index: 90;
-      background: rgba(5, 8, 14, 0.94);
+      background: rgba(5, 8, 14, 0.96);
       display: none; flex-direction: column; align-items: center; justify-content: center;
-      padding: 16px;
+      padding: calc(16px + var(--safe-top)) 16px 16px 16px;
     }
     .modal-backdrop.open { display: flex; }
     .cam-stage {
       position: relative; width: 100%; max-width: 540px; border-radius: 14px;
       overflow: hidden; border: 2px solid var(--primary); background: #000;
     }
-    #liveVideo { width: 100%; display: block; max-height: 62vh; object-fit: cover; }
+    #liveVideo { width: 100%; display: block; max-height: 60vh; object-fit: cover; }
     .cam-guide-line {
       position: absolute; top: 0; bottom: 0; left: 50%; width: 2px;
       background: rgba(56, 189, 248, 0.7); pointer-events: none;
@@ -294,12 +326,15 @@
 
     /* Toast */
     .toast {
-      position: fixed; top: 66px; left: 50%; transform: translateX(-50%);
+      position: fixed; top: calc(68px + var(--safe-top)); left: 50%; transform: translateX(-50%);
       background: #1e293b; color: #fff; border: 1px solid var(--primary);
       padding: 9px 16px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
       box-shadow: 0 8px 24px rgba(0,0,0,0.55); z-index: 100;
       opacity: 0; pointer-events: none; transition: 0.2s;
       max-width: 90vw; text-align: center;
+    }
+    body.ios-standalone .toast {
+      top: max(112px, calc(72px + var(--safe-top)));
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(4px); }
   </style>
@@ -310,7 +345,7 @@
   <div class="brand">
     <div class="brand-logo">🐱</div>
     <div style="min-width:0;">
-      <div class="brand-title">조색냥이 <span class="badge-pill" id="headerCountBadge">Hi-TEC 84종</span></div>
+      <div class="brand-title">조색냥이 <span class="badge-beta">Beta v3.0</span> <span class="badge-pill" id="headerCountBadge">Hi-TEC 84종</span></div>
       <div class="brand-sub">렉서스 · 토요타 × 스피스해커 하이텍 색상매치</div>
     </div>
   </div>
@@ -335,7 +370,7 @@
   </div>
   <p style="font-size:12px; color:var(--text-dim); text-align:center; margin:10px 0;">
     직사광 반사를 피해 좌측에 차체, 우측에 시편을 맞추고 촬영하세요.<br>
-    (EXIF 셔속/화밸 정밀 기록이 필요하면 "아이폰 기본 카메라" 버튼을 쓰세요)
+    (EXIF 셔속/화밸 기록이 필요하면 "아이폰 카메라" 버튼을 쓰세요)
   </p>
   <button class="btn btn-primary" style="width:100%; max-width:300px;" onclick="captureLiveCamera()">📸 이 화면 캡쳐하기</button>
 </div>
@@ -353,7 +388,7 @@
     <div id="cameraModeBox">
       <div class="card">
         <div class="card-header">
-          <div class="card-title">📸 촬영 / 사진 불러오기</div>
+          <div class="card-title">📸 1차 시편 촬영 / 불러오기</div>
           <select id="shotModeSelect" style="width:auto; padding:5px 8px; font-size:12px;" onchange="toggleDualUpload()">
             <option value="single">1컷 동시 비교 (차체+시편 함께)</option>
             <option value="dual">2컷 개별 비교 (EXIF 선형노출 보정)</option>
@@ -413,11 +448,11 @@
           </div>
         </div>
         <p style="font-size:12px; color:var(--text-dim); margin:0 0 8px;">
-          핀을 손가락으로 드래그해 <b>파란핀(STD 차체)</b>과 <b>초록핀(Sample 시편)</b>을 맞추세요. 확대 루페는 핀을 가리지 않고 실제 도장면만 확대해 보여줍니다.
+          핀을 드래그해 <b>파란핀(STD 차체)</b>과 <b>초록핀(Sample 시편)</b>을 맞추세요. 확대 루페는 핀을 가리지 않고 순수 도장면만 확대합니다.
         </p>
 
         <div class="canvas-wrap" id="canvasWrap">
-          <canvas id="photoCanvas" width="720" height="440"></canvas>
+          <canvas id="photoCanvas" class="main-view" width="720" height="440"></canvas>
           <div class="loupe" id="loupe">
             <canvas id="loupeCanvas" width="104" height="104"></canvas>
             <div class="loupe-cross">+</div>
@@ -494,13 +529,14 @@
         </thead>
         <tbody id="liveDeltaBody"></tbody>
       </table>
-      <p style="font-size:11.5px; color:var(--text-muted); margin:8px 0 0;">
-        * 부호 기준: <b>시편 − 기준</b> (+면 시편이 더 밝음/적색/황색, −면 시편이 더 어두움/녹색/청색). 일부 측색기(기준−시편)와 부호가 반대이니 구분해 보세요.
+      <p style="font-size:11.5px; color:var(--text-muted); margin:8px 0 10px;">
+        * 부호 기준: <b>시편 − 기준</b> (+면 시편이 더 밝음/적색/황색, −면 시편이 더 어두움/녹색/청색).
       </p>
+      <button class="btn btn-primary btn-block" onclick="runFullAnalysis(true)">🐱 조색 처방 리포트 생성하기</button>
     </div>
   </section>
 
-  <!-- ==================== TAB 2: 배합표 / 하이텍 84종 DB ==================== -->
+  <!-- ==================== TAB 2: 배합표 / 하이텍 도감 + 사용자 등록 ==================== -->
   <section id="tab-recipe" class="tab-panel">
     <div class="card">
       <div class="card-header">
@@ -519,7 +555,7 @@
         </select>
       </div>
 
-      <div class="grid-3" style="margin-bottom:10px;">
+      <div class="grid-3" style="margin-bottom:8px;">
         <div>
           <div class="sec-label">목표 총량 (g)</div>
           <input type="number" id="targetWeightInput" value="100" step="10" min="1" onchange="scaleRecipeToTarget(this.value)" />
@@ -541,12 +577,18 @@
         </div>
       </div>
 
+      <!-- 도장부 실무 편의: 저울 누적 중량 보기 토글 -->
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface2); padding:7px 10px; border-radius:9px; border:1px solid var(--border); margin-bottom:8px;">
+        <span style="font-size:12px; font-weight:700; color:#cbd5e1;">⚖️ 전자저울 영점(Tare) 없이 누적 중량 표시</span>
+        <input type="checkbox" id="cumScaleCheck" style="width:auto;" onchange="renderActiveRecipe(); renderAdjustedRecipeTable();" />
+      </div>
+
       <table class="data-tbl">
         <thead>
           <tr>
             <th>토너 코드</th>
-            <th>명칭 / 각도특성</th>
-            <th class="num">중량 (g)</th>
+            <th>명칭 / 특성</th>
+            <th class="num" id="activeWeightColHeader">중량 (g)</th>
             <th class="num">비중</th>
             <th></th>
           </tr>
@@ -568,6 +610,83 @@
       </details>
     </div>
 
+    <!-- 도장부 실무 편의: 하이텍 신너(희석제) & 블랜딩 1051 컵 계산기 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💧 하이텍 신너(희석제) · 블랜딩 1051 계산기</div>
+      </div>
+      <div class="grid-3" style="margin-bottom:8px;">
+        <div>
+          <div class="sec-label">베이스코트 (g)</div>
+          <input type="number" id="thinnerBaseG" value="100" step="5" min="0" oninput="calcThinnerMix()" />
+        </div>
+        <div>
+          <div class="sec-label">희석 비율 (%)</div>
+          <select id="thinnerRatioSelect" onchange="calcThinnerMix()">
+            <option value="10">10% (고은폐/하절기)</option>
+            <option value="15" selected>15% (표준 WT 6050)</option>
+            <option value="20">20% (메탈릭/펄 평활)</option>
+            <option value="25">25% (드롭코트/컨트롤)</option>
+          </select>
+        </div>
+        <div>
+          <div class="sec-label">블랜딩 1051</div>
+          <select id="blendAddSelect" onchange="calcThinnerMix()">
+            <option value="0">미사용 (맞대기)</option>
+            <option value="30">보카시 30% 혼합</option>
+            <option value="50">보카시 50% 혼합</option>
+          </select>
+        </div>
+      </div>
+      <div id="thinnerMixResult" style="font-size:12.5px; color:#6ee7b7; font-weight:700; line-height:1.5;"></div>
+    </div>
+
+    <!-- Beta v3.0 신규: 사용자 커스텀 페인트 / 토너 직접 등록 -->
+    <div class="card" style="border-color: rgba(167, 139, 250, 0.45);">
+      <div class="card-header">
+        <div class="card-title">➕ 새 페인트 / 토너 도감 직접 등록 <span class="badge-beta">Beta v3</span></div>
+      </div>
+      <p style="font-size:12px; color:var(--text-dim); margin:0 0 8px;">
+        신규 출시 토너나 현장에서 따로 관리하는 조색제·첨가제를 등록하면 아래 토너 도감과 배합 추가 목록에 영구 저장됩니다.
+      </p>
+      <div class="grid-3" style="margin-bottom:8px;">
+        <div>
+          <div class="sec-label">토너 코드 *</div>
+          <input type="text" id="newTonerCode" placeholder="예: WT 395" />
+        </div>
+        <div>
+          <div class="sec-label">분류</div>
+          <select id="newTonerCat">
+            <option value="알루미늄">알루미늄</option>
+            <option value="펄">펄</option>
+            <option value="원색">원색</option>
+            <option value="무채색">무채색</option>
+            <option value="저농">저농</option>
+            <option value="첨가제">첨가제</option>
+          </select>
+        </div>
+        <div>
+          <div class="sec-label">색상칩 컬러</div>
+          <input type="color" id="newTonerSwatch" value="#38bdf8" />
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:8px;">
+        <div>
+          <div class="sec-label">색상 이름 *</div>
+          <input type="text" id="newTonerName" placeholder="예: 울트라 스파클 실버" />
+        </div>
+        <div>
+          <div class="sec-label">각도/플롭 요약 (선택)</div>
+          <input type="text" id="newTonerFlop" placeholder="예: 15°밝음 / 110°어두움" />
+        </div>
+      </div>
+      <div style="margin-bottom:8px;">
+        <div class="sec-label">색상 상세 설명 *</div>
+        <textarea id="newTonerDesc" rows="2" placeholder="예: 입자가 매우 곱고 정면 휘도가 높은 신규 실버 토너. 렉서스 신형 차종에 적용됨."></textarea>
+      </div>
+      <button class="btn btn-violet btn-block" onclick="saveCustomToner()">💾 토너 도감에 등록 저장하기</button>
+    </div>
+
     <!-- 저농 <-> 고농 희석 환산기 (실물 라벨 데이터) -->
     <div class="card">
       <div class="card-header">
@@ -587,14 +706,15 @@
       <div id="dilutionResult" style="font-size:12.5px; color:#7dd3fc; font-weight:700; line-height:1.5;"></div>
     </div>
 
-    <!-- Permahyd Hi-TEC 84종 실물 도감 -->
+    <!-- Permahyd Hi-TEC 실물 + 사용자 등록 도감 -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">📚 스피스해커 하이텍 실물 토너 도감 (<span id="dbCountSpan">84</span>종)</div>
+        <div class="card-title">📚 스피스해커 하이텍 토너 도감 (<span id="dbCountSpan">84</span>종)</div>
       </div>
       <input type="text" id="tonerSearchInput" placeholder="코드(예: WT 317, 386, 1500), 색상명, OEM(1J7, 1F1) 검색..." oninput="renderTonerLibrary()" style="margin-bottom:8px;" />
       <div class="chip-row" id="tonerCatChips">
-        <button class="chip active" onclick="setTonerCat('ALL', this)">전체 (84)</button>
+        <button class="chip active" id="chipAllCount" onclick="setTonerCat('ALL', this)">전체 (84)</button>
+        <button class="chip" id="chipCustomCount" onclick="setTonerCat('CUSTOM', this)">⭐ 내 등록 (0)</button>
         <button class="chip" onclick="setTonerCat('알루미늄', this)">알루미늄/실버</button>
         <button class="chip" onclick="setTonerCat('펄', this)">펄/질라릭/매직</button>
         <button class="chip" onclick="setTonerCat('원색', this)">원색/트랜스루센트</button>
@@ -606,10 +726,10 @@
     </div>
   </section>
 
-  <!-- ==================== TAB 3: 조색냥이 분석 리포트 ==================== -->
+  <!-- ==================== TAB 3: 조색냥이 분석 리포트 & 2차 완성도 검증 ==================== -->
   <section id="tab-report" class="tab-panel">
     <div class="report-hero">
-      <div style="font-size:11px; color:#93c5fd; font-weight:800; margin-bottom:4px;">🐾 조색냥이 현장 판독 리포트</div>
+      <div style="font-size:11px; color:#93c5fd; font-weight:800; margin-bottom:4px;">🐾 조색냥이 1차 판독 및 보정 처방 리포트</div>
       <div class="report-verdict" id="reportMainVerdict">상단 '분석 실행'을 누르면 처방 리포트가 표시됩니다.</div>
       <div style="font-size:12.5px; color:#cbd5e1;" id="reportSubVerdict"></div>
       <div id="reportSafetyAlerts"></div>
@@ -634,7 +754,7 @@
           <tr>
             <th>토너</th>
             <th class="num">원본</th>
-            <th class="num">수정안</th>
+            <th class="num" id="adjWeightColHeader">수정안</th>
             <th class="num">변화 / 조정</th>
           </tr>
         </thead>
@@ -651,10 +771,10 @@
       <div id="tonerReasoningList"></div>
     </div>
 
-    <!-- ③ 3존 예상 변화 (15° / 45° / 110°) -->
+    <!-- ③ 3존 예상 변화 & 도장부스 스프레이 가이드 -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">③ 3존 예상 변화 (수정 후 시뮬레이션)</div>
+        <div class="card-title">③ 3존 예상 변화 &amp; 부스 스프레이 조건 가이드</div>
       </div>
       <table class="data-tbl">
         <thead>
@@ -666,15 +786,110 @@
         <tbody id="threeZoneForecastBody"></tbody>
       </table>
       <div id="structureMatchSummary" style="margin-top:10px; padding:10px; background:var(--surface2); border-radius:10px; font-size:12.5px; font-weight:700; line-height:1.6;"></div>
+      <div id="boothSprayGuide" class="alert-box alert-emerald" style="margin-top:10px;"></div>
     </div>
 
-    <!-- ④ 시편 vs 차체 비교 분석 & Engineer Action -->
+    <!-- ④ 시편 vs 차체 비교 분석 -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">④ 시편 vs 차체 비교 분석 &amp; 현장 액션</div>
       </div>
       <div id="comparisonNarrative" style="font-size:13px; line-height:1.58;"></div>
-      <div style="margin-top:12px; display:grid; grid-template-columns:1.3fr 0.9fr; gap:8px;">
+    </div>
+
+    <!-- ==================== ⑤ Beta v3.0 신규: 2차 보정 시편(결과물) 완성도 검증 피드백 ==================== -->
+    <div class="card card-highlight">
+      <div class="card-header">
+        <div class="card-title">🎯 ⑤ 2차 보정 결과물 업로드 &amp; 완성도 검증 <span class="badge-beta">Beta v3</span></div>
+      </div>
+      <p style="font-size:12px; color:var(--text-dim); margin:0 0 10px;">
+        처방대로 토너를 추가 배합해 <b>2차 시편(보정 결과물)</b>을 뿌린 뒤 사진으로 찍어 올리거나 색측기 수치를 입력하면, <b>차체 원색(STD) 대비 완성도 등급과 잔여 오차 피드백</b>을 판정해 드립니다.
+      </p>
+
+      <div class="seg-bar" style="margin-bottom:8px;">
+        <button class="seg-btn active" id="vModePhotoBtn" onclick="switchVerifyInputMode('photo')">📷 2차 결과물 사진 업로드</button>
+        <button class="seg-btn" id="vModeLabBtn" onclick="switchVerifyInputMode('lab')">🔬 2차 색측기 L*a*b*</button>
+      </div>
+
+      <!-- 2차 사진 업로드 모드 -->
+      <div id="verifyPhotoBox">
+        <div class="grid-3" style="margin-bottom:8px;">
+          <label class="btn btn-emerald" style="padding:7px 5px; font-size:11.5px;">
+            📷 2차 시편 촬영
+            <input type="file" accept="image/*" capture="environment" style="display:none" onchange="handleVerifyImageUpload(event)" />
+          </label>
+          <label class="btn" style="padding:7px 5px; font-size:11.5px;">
+            🖼️ 앨범 선택
+            <input type="file" accept="image/*" style="display:none" onchange="handleVerifyImageUpload(event)" />
+          </label>
+          <button class="btn btn-amber" style="padding:7px 5px; font-size:11.5px;" onclick="loadVerifyDemo()">
+            ✨ 성공 샘플 테스트
+          </button>
+        </div>
+
+        <div id="verifyCanvasContainer" style="display:none; margin-bottom:8px;">
+          <div style="font-size:11.5px; color:#a7f3d0; margin-bottom:5px;">
+            👇 초록 핀을 드래그해 <b>2차 보정 시편(결과물)</b>의 15°·45°·105° 영역에 맞추세요 (차체 원색은 1차 STD 기준값을 자동 유지합니다).
+          </div>
+          <div class="canvas-wrap" id="verifyCanvasWrap">
+            <canvas id="verifyCanvas" class="main-view" width="720" height="360"></canvas>
+            <div class="loupe" id="verifyLoupe">
+              <canvas id="verifyLoupeCanvas" width="104" height="104"></canvas>
+              <div class="loupe-cross">+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2차 색측기 직접 입력 모드 -->
+      <div id="verifyLabBox" style="display:none; margin-bottom:8px;">
+        <table class="data-tbl">
+          <thead>
+            <tr>
+              <th>각도 (2차 시편)</th>
+              <th>L* (명도)</th>
+              <th>a* (+적/-녹)</th>
+              <th>b* (+황/-청)</th>
+            </tr>
+          </thead>
+          <tbody id="verifyLabInputBody"></tbody>
+        </table>
+      </div>
+
+      <button class="btn btn-emerald btn-block" onclick="evaluateSecondSprayOut()">✅ 2차 보정 결과물 완성도 판정 실행</button>
+
+      <!-- 완성도 판정 결과 박스 -->
+      <div id="verifyResultPanel" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+          <span class="grade-pill" id="verifyGradeBadge">S등급 합격</span>
+          <span style="font-size:12.5px; font-weight:800; color:#7dd3fc;" id="verifyDeImprovement">ΔE00: -- → --</span>
+        </div>
+
+        <!-- 차체(STD) vs 1차 시편 vs 2차 결과물 3단 색상 비교 -->
+        <div class="verify-compare-bar" id="verifySwatchCompare"></div>
+
+        <table class="data-tbl" style="margin-bottom:8px;">
+          <thead>
+            <tr>
+              <th>판독 항목</th>
+              <th class="num">1차 편차</th>
+              <th class="num">2차 편차</th>
+              <th class="num">상태</th>
+            </tr>
+          </thead>
+          <tbody id="verifyAxisTableBody"></tbody>
+        </table>
+
+        <div id="verifyFeedbackText" class="alert-box alert-emerald"></div>
+      </div>
+    </div>
+
+    <!-- 작업 이력 저장 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💾 현재 조색·검증 데이터 저장</div>
+      </div>
+      <div style="display:grid; grid-template-columns:1.3fr 0.9fr; gap:8px;">
         <input type="text" id="saveCaseTitle" placeholder="차종/컬러/판넬 (예: ES300h 1J7 앞도어)" />
         <button class="btn btn-primary" onclick="saveCurrentCase()">💾 이력 저장</button>
       </div>
@@ -685,9 +900,9 @@
   <section id="tab-history" class="tab-panel">
     <div class="card">
       <div class="card-header">
-        <div class="card-title">🗂️ 저장된 조색 이력 (오프라인 보관함)</div>
+        <div class="card-title">🗂️ 저장된 조색 이력 &amp; 사용자 토너 백업</div>
         <div style="display:flex; gap:6px;">
-          <button class="btn btn-sm" onclick="exportHistoryJson()">백업(JSON)</button>
+          <button class="btn btn-sm" onclick="exportHistoryJson()">통합 백업(JSON)</button>
           <label class="btn btn-sm">
             복원
             <input type="file" accept=".json" style="display:none" onchange="importHistoryJson(event)" />
@@ -695,7 +910,7 @@
         </div>
       </div>
       <p style="font-size:12px; color:var(--text-dim); margin:0 0 10px;">
-        접속한 기기의 브라우저에 자동 저장됩니다. 휴대폰 교체나 기록 공유 시 JSON 백업/복원을 활용하세요.
+        접속한 기기의 브라우저에 자동 저장됩니다. <b>통합 백업(JSON)</b> 시 저장된 조색 이력과 내가 직접 등록한 커스텀 토너 목록이 함께 백업됩니다.
       </p>
       <div id="historyList"></div>
     </div>
@@ -705,16 +920,16 @@
 
 <nav class="bottom-nav">
   <button class="nav-btn active" onclick="switchTab('capture', this)"><span class="ico">📷</span><span>촬영/측색</span></button>
-  <button class="nav-btn" onclick="switchTab('recipe', this)"><span class="ico">🧪</span><span>배합표/84종</span></button>
-  <button class="nav-btn" onclick="switchTab('report', this)"><span class="ico">🐱</span><span>분석 리포트</span></button>
+  <button class="nav-btn" onclick="switchTab('recipe', this)"><span class="ico">🧪</span><span>배합표/도감</span></button>
+  <button class="nav-btn" onclick="switchTab('report', this)"><span class="ico">🐱</span><span>분석/검증</span></button>
   <button class="nav-btn" onclick="switchTab('history', this)"><span class="ico">🗂️</span><span>작업 이력</span></button>
 </nav>
 
 <script>
 /* ============================================================================
-   1. 스피스해커 퍼마하이드 하이텍 (Permahyd Hi-TEC) 실물 조색대 84종 전체 데이터
+   1. 스피스해커 퍼마하이드 하이텍 (Permahyd Hi-TEC) 실물 조색대 84종 기본 데이터
    ============================================================================ */
-const TONER_DB = [
+const BASE_TONER_DB = [
   // --- 이미지 1 (IMG_2725: 18종) ---
   { code: "WT 188", name: "슈퍼 딥 블랙", en: "Super Deep Black", cat: "무채색", swatch: "#0a0a0c", particle: 0, hiding: "상", flop: "어두움(WT388보다 어두움)", desc: "어두운 흑색 조색제. WT388보다 조금 더 어두움. 주로 흑색계열의 컬러에 제한적으로 사용함." },
   { code: "WT 197", name: "실크 실버 울트라 파인", en: "Silk Silver Ultra Fine", cat: "알루미늄", swatch: "#b8c0c8", particle: 1, hiding: "상", flop: "매끈·초소형 반짝임", oem: "Nissan KAB, Lexus 1F1, M.Benz 047", desc: "입자의 크기는 매우 작지만 반짝임이 좋은 특수 알루미늄 조색제. 매끈한 느낌의 은색에 사용됨. 예) Nissan- KAB, Lexus- 1F1, M.Benz- 047과 같은 OEM에 적용됨." },
@@ -745,7 +960,7 @@ const TONER_DB = [
   { code: "WT 334", name: "옥사이드 레드", en: "Oxide Red", cat: "원색", swatch: "#6b211a", particle: 0, hiding: "상", flop: "솔리드 은폐우수", desc: "주로 솔리드 컬러에 사용하는 탁한 적색 조색제. 조색제 단독으로는 은폐력 좋음. 이펙트 컬러에서 특히 45 & 110도에 황적색을 띠게 하기위해 소량 사용." },
   { code: "WT 335", name: "다크 옐로우", en: "Dark Yellow", cat: "원색", swatch: "#d97706", particle: 0, hiding: "중", flop: "솔리드 주력", desc: "적색을 조금 띠는 밝은 황색 조색제. 주로 솔리드 컬러에 사용함. 이펙트 컬러에서는 특히 45 & 110도에 밝은 녹황색이 부족할 경우에만 소량 사용." },
   { code: "WT 336", name: "트랜스루센트 레드", en: "Translucent Red", cat: "원색", swatch: "#581c1c", particle: 0, hiding: "하", flop: "이펙트 전용 갈색", desc: "선명하며 어두운 갈색 조색제. 이펙트 컬러에만 사용." },
-  { code: "WT 337", name: "레드", en: "Red", cat: "원색", swatch: "#9f1239", particle: 0, hiding: "중", flop: "솔리드 약청적색", desc: "중간 정도의 적색 조색제. 주로 솔리드 컬러에 사용함. 약하게 청색을 띰." },
+  { code: "WT 337", name: "레드", en: "Red", cat: "원색", swatch: "#c81e32", particle: 0, hiding: "중", flop: "솔리드 약청적색", desc: "중간 정도의 적색 조색제. 주로 솔리드 컬러에 사용함. 약하게 청색을 띰." },
   { code: "WT 338", name: "블루이쉬 마젠타 레드", en: "Bluish Magenta Red", cat: "원색", swatch: "#9d174d", particle: 0, hiding: "중", flop: "표준 자주", desc: "표준 자주색 조색제. 백색 및 알루미늄 입자에 혼합할 경우 맑은 분홍색을 나타냄." },
   { code: "WT 339", name: "바이올렛", en: "Violet", cat: "원색", swatch: "#4c1d95", particle: 0, hiding: "중", flop: "보라/명암어둡게", desc: "맑은 보라색 조색제. 청색 및 회색 컬러에 주로 사용되며 보라색을 내고 명암을 어둡게 함." },
   { code: "WT 340", name: "옐로우 마젠타 레드", en: "Yellow Magenta Red", cat: "원색", swatch: "#db2777", particle: 0, hiding: "하", flop: "이펙트 분홍(>WT338 밝음)", desc: "맑은 자주색 조색제. WT338에 비해 밝고 청색이 적음. 주로 이펙트 컬러에 사용함. 알루미늄 입자에 혼합할 경우 맑은 분홍색을 냄." },
@@ -810,7 +1025,88 @@ const TONER_DB = [
   { code: "WT 1500", name: "울트라 딥 블랙", en: "Ultra Deep Black", cat: "무채색", swatch: "#000000", particle: 0, hiding: "최상", flop: "실버2%/솔리드5%/펄5% 제한!", desc: "가장 어두운 흑색 조색제. 염료를 함유하고 있어 알루미늄 입자에 2% 이상 사용하면 알루미늄 입자와 반응하여 색상이 변할 수 있고 내구성에도 문제가 될 수 있음 (솔리드: 최대 5%, 실버: 최대 2%, 펄: 최대 5% 이내 사용)." }
 ];
 
-const TONER_MAP = Object.fromEntries(TONER_DB.map(t => [t.code, t]));
+const CUSTOM_TONER_KEY = "josaek_nyangi_custom_toners_v3";
+const STORAGE_KEY = "josaek_nyangi_history_v3";
+
+let customToners = [];
+let TONER_DB = [];
+let TONER_MAP = {};
+
+function rebuildTonerDatabase() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(CUSTOM_TONER_KEY) || "[]");
+    customToners = Array.isArray(raw) ? raw : [];
+  } catch {
+    customToners = [];
+  }
+  const map = new Map();
+  BASE_TONER_DB.forEach(t => map.set(t.code, { ...t, isCustom: false }));
+  customToners.forEach(ct => map.set(ct.code, { ...ct, isCustom: true }));
+  TONER_DB = Array.from(map.values());
+  TONER_MAP = Object.fromEntries(TONER_DB.map(t => [t.code, t]));
+
+  document.getElementById("headerCountBadge").textContent = `Hi-TEC ${TONER_DB.length}종`;
+  document.getElementById("dbCountSpan").textContent = TONER_DB.length;
+  document.getElementById("chipAllCount").textContent = `전체 (${TONER_DB.length})`;
+  document.getElementById("chipCustomCount").textContent = `⭐ 내 등록 (${customToners.length})`;
+
+  const sel = document.getElementById("quickAddTonerSelect");
+  if (sel) {
+    sel.innerHTML = TONER_DB.map(t => `<option value="${t.code}">${t.code} - ${t.name}${t.isCustom ? " [내등록]" : ""}</option>`).join("");
+  }
+}
+
+function saveCustomToner() {
+  const codeRaw = (document.getElementById("newTonerCode").value || "").trim().toUpperCase();
+  const name = (document.getElementById("newTonerName").value || "").trim();
+  const cat = document.getElementById("newTonerCat").value;
+  const swatch = document.getElementById("newTonerSwatch").value || "#38bdf8";
+  const flop = (document.getElementById("newTonerFlop").value || "").trim() || "사용자 등록";
+  const desc = (document.getElementById("newTonerDesc").value || "").trim();
+
+  if (!codeRaw || !name) {
+    showToast("토너 코드와 색상 이름을 입력해 주세요.");
+    return;
+  }
+  const normalizedCode = /^WT\d+$/i.test(codeRaw) ? codeRaw.replace(/^WT/i, "WT ") : codeRaw;
+
+  const newEntry = {
+    code: normalizedCode,
+    name,
+    en: "Custom Toner",
+    cat,
+    swatch,
+    particle: (cat === "알루미늄" || cat === "펄") ? 2 : 0,
+    hiding: "사용자지정",
+    flop,
+    desc: desc || `${name} (사용자 직접 등록 토너)`,
+    isCustom: true
+  };
+
+  const idx = customToners.findIndex(x => x.code === normalizedCode);
+  if (idx >= 0) customToners[idx] = newEntry;
+  else customToners.unshift(newEntry);
+
+  localStorage.setItem(CUSTOM_TONER_KEY, JSON.stringify(customToners));
+  rebuildTonerDatabase();
+  renderTonerLibrary();
+  renderActiveRecipe();
+
+  document.getElementById("newTonerCode").value = "";
+  document.getElementById("newTonerName").value = "";
+  document.getElementById("newTonerFlop").value = "";
+  document.getElementById("newTonerDesc").value = "";
+  showToast(`✅ '${normalizedCode} (${name})' 도감 저장 완료!`);
+}
+
+function deleteCustomToner(code) {
+  customToners = customToners.filter(x => x.code !== code);
+  localStorage.setItem(CUSTOM_TONER_KEY, JSON.stringify(customToners));
+  rebuildTonerDatabase();
+  renderTonerLibrary();
+  renderActiveRecipe();
+  showToast(`${code} 사용자 등록 토너가 삭제되었습니다.`);
+}
 
 /* ============================================================================
    2. 렉서스 · 토요타 대표 컬러코드 실전 배합표 프리셋 (100g 기준)
@@ -820,26 +1116,17 @@ const RECIPE_PRESETS = {
     title: "렉서스 1J7 (소닉 티타늄 / Sonic Titanium)",
     finish: "effect",
     items: [
-      { code: "WT 317", g: 26.40 },
-      { code: "WT 389", g: 12.80 },
-      { code: "WT 323", g: 8.60 },
-      { code: "WT 322", g: 4.20 },
-      { code: "WT 339", g: 1.45 },
-      { code: "WT 329", g: 0.55 },
-      { code: "WT 385", g: 31.00 },
-      { code: "WT 387", g: 15.00 }
+      { code: "WT 317", g: 26.40 }, { code: "WT 389", g: 12.80 }, { code: "WT 323", g: 8.60 },
+      { code: "WT 322", g: 4.20 },  { code: "WT 339", g: 1.45 },  { code: "WT 329", g: 0.55 },
+      { code: "WT 385", g: 31.00 }, { code: "WT 387", g: 15.00 }
     ]
   },
   "1F1": {
     title: "렉서스 1F1 (코스믹 실버 / Cosmic Silver)",
     finish: "effect",
     items: [
-      { code: "WT 197", g: 24.50 },
-      { code: "WT 305", g: 15.20 },
-      { code: "WT 317", g: 6.80 },
-      { code: "WT 323", g: 3.10 },
-      { code: "WT 343", g: 0.90 },
-      { code: "WT 385", g: 34.50 },
+      { code: "WT 197", g: 24.50 }, { code: "WT 305", g: 15.20 }, { code: "WT 317", g: 6.80 },
+      { code: "WT 323", g: 3.10 },  { code: "WT 343", g: 0.90 },  { code: "WT 385", g: 34.50 },
       { code: "WT 387", g: 15.00 }
     ]
   },
@@ -847,35 +1134,24 @@ const RECIPE_PRESETS = {
     title: "토요타/렉서스 070 (화이트 펄 - 하도/그라운드)",
     finish: "solid",
     items: [
-      { code: "WT 321", g: 52.40 },
-      { code: "WT 328", g: 1.85 },
-      { code: "WT 323", g: 0.45 },
-      { code: "WT 385", g: 30.30 },
-      { code: "WT 387", g: 15.00 }
+      { code: "WT 321", g: 52.40 }, { code: "WT 328", g: 1.85 }, { code: "WT 323", g: 0.45 },
+      { code: "WT 385", g: 30.30 }, { code: "WT 387", g: 15.00 }
     ]
   },
   "070_P": {
     title: "토요타/렉서스 070 (화이트 펄 - 상도 펄코트)",
     finish: "effect",
     items: [
-      { code: "WT 310", g: 42.00 },
-      { code: "WT 320", g: 7.80 },
-      { code: "WT 368", g: 3.40 },
-      { code: "WT 352", g: 2.80 },
-      { code: "WT 385", g: 29.00 },
-      { code: "WT 387", g: 15.00 }
+      { code: "WT 310", g: 42.00 }, { code: "WT 320", g: 7.80 }, { code: "WT 368", g: 3.40 },
+      { code: "WT 352", g: 2.80 },  { code: "WT 385", g: 29.00 }, { code: "WT 387", g: 15.00 }
     ]
   },
   "085": {
     title: "렉서스 085 (소닉 쿼츠 / Sonic Quartz)",
     finish: "effect",
     items: [
-      { code: "WT 321", g: 44.20 },
-      { code: "WT 320", g: 6.40 },
-      { code: "WT 377", g: 2.10 },
-      { code: "WT 328", g: 0.95 },
-      { code: "WT 350", g: 0.65 },
-      { code: "WT 385", g: 30.70 },
+      { code: "WT 321", g: 44.20 }, { code: "WT 320", g: 6.40 }, { code: "WT 377", g: 2.10 },
+      { code: "WT 328", g: 0.95 },  { code: "WT 350", g: 0.65 }, { code: "WT 385", g: 30.70 },
       { code: "WT 387", g: 15.00 }
     ]
   },
@@ -883,12 +1159,8 @@ const RECIPE_PRESETS = {
     title: "렉서스 1L1 (플래티넘 실버 / Iridium)",
     finish: "effect",
     items: [
-      { code: "WT 303", g: 28.50 },
-      { code: "WT 389", g: 14.20 },
-      { code: "WT 322", g: 5.10 },
-      { code: "WT 350", g: 2.40 },
-      { code: "WT 343", g: 0.80 },
-      { code: "WT 385", g: 34.00 },
+      { code: "WT 303", g: 28.50 }, { code: "WT 389", g: 14.20 }, { code: "WT 322", g: 5.10 },
+      { code: "WT 350", g: 2.40 },  { code: "WT 343", g: 0.80 },  { code: "WT 385", g: 34.00 },
       { code: "WT 387", g: 15.00 }
     ]
   },
@@ -896,26 +1168,17 @@ const RECIPE_PRESETS = {
     title: "토요타/렉서스 1G3 (마그네틱 그레이)",
     finish: "effect",
     items: [
-      { code: "WT 323", g: 21.80 },
-      { code: "WT 354", g: 14.60 },
-      { code: "WT 356", g: 7.40 },
-      { code: "WT 322", g: 3.90 },
-      { code: "WT 343", g: 2.10 },
-      { code: "WT 329", g: 0.70 },
-      { code: "WT 385", g: 34.50 },
-      { code: "WT 387", g: 15.00 }
+      { code: "WT 323", g: 21.80 }, { code: "WT 354", g: 14.60 }, { code: "WT 356", g: 7.40 },
+      { code: "WT 322", g: 3.90 },  { code: "WT 343", g: 2.10 },  { code: "WT 329", g: 0.70 },
+      { code: "WT 385", g: 34.50 }, { code: "WT 387", g: 15.00 }
     ]
   },
   "223": {
     title: "렉서스 223 (그래파이트 블랙 글래스플레이크)",
     finish: "effect",
     items: [
-      { code: "WT 188", g: 34.00 },
-      { code: "WT 377", g: 4.80 },
-      { code: "WT 381", g: 2.60 },
-      { code: "WT 339", g: 2.20 },
-      { code: "WT 354", g: 1.90 },
-      { code: "WT 385", g: 39.50 },
+      { code: "WT 188", g: 34.00 }, { code: "WT 377", g: 4.80 }, { code: "WT 381", g: 2.60 },
+      { code: "WT 339", g: 2.20 },  { code: "WT 354", g: 1.90 }, { code: "WT 385", g: 39.50 },
       { code: "WT 387", g: 15.00 }
     ]
   },
@@ -923,12 +1186,8 @@ const RECIPE_PRESETS = {
     title: "렉서스 3R1 (레드 마이카 크리스탈 샤인)",
     finish: "effect",
     items: [
-      { code: "WT 332", g: 22.40 },
-      { code: "WT 311", g: 14.80 },
-      { code: "WT 369", g: 7.50 },
-      { code: "WT 378", g: 3.60 },
-      { code: "WT 331", g: 2.20 },
-      { code: "WT 385", g: 34.50 },
+      { code: "WT 332", g: 22.40 }, { code: "WT 311", g: 14.80 }, { code: "WT 369", g: 7.50 },
+      { code: "WT 378", g: 3.60 },  { code: "WT 331", g: 2.20 },  { code: "WT 385", g: 34.50 },
       { code: "WT 387", g: 15.00 }
     ]
   },
@@ -936,12 +1195,8 @@ const RECIPE_PRESETS = {
     title: "렉서스 8X5 (딥 블루 마이카)",
     finish: "effect",
     items: [
-      { code: "WT 344", g: 24.00 },
-      { code: "WT 341", g: 12.50 },
-      { code: "WT 372", g: 6.20 },
-      { code: "WT 381", g: 2.90 },
-      { code: "WT 323", g: 3.40 },
-      { code: "WT 385", g: 36.00 },
+      { code: "WT 344", g: 24.00 }, { code: "WT 341", g: 12.50 }, { code: "WT 372", g: 6.20 },
+      { code: "WT 381", g: 2.90 },  { code: "WT 323", g: 3.40 },  { code: "WT 385", g: 36.00 },
       { code: "WT 387", g: 15.00 }
     ]
   }
@@ -951,17 +1206,11 @@ const RECIPE_PRESETS = {
    3. 앱 상태 (State)
    ============================================================================ */
 let state = {
-  measureMode: "camera", // 'camera' | 'spectro'
-  shotMode: "single",    // 'single' | 'dual'
-  imgSingle: null,
-  imgStd: null,
-  imgSample: null,
-  urlSingle: null,
-  urlStd: null,
-  urlSample: null,
-  exifSingle: null,
-  exifStd: null,
-  exifSample: null,
+  measureMode: "camera",
+  shotMode: "single",
+  imgSingle: null, imgStd: null, imgSample: null,
+  urlSingle: null, urlStd: null, urlSample: null,
+  exifSingle: null, exifStd: null, exifSample: null,
   hasUploadedSingle: false,
   pins: [
     { id: "std-15",  group: "std", angle: 15,  x: 0.26, y: 0.24 },
@@ -977,6 +1226,22 @@ let state = {
     45:  { std: { L: 48.20, a: -0.45, b: -0.60, grain: 9.5 }, smp: { L: 50.45, a: -0.30, b: 0.15, grain: 12.1 } },
     105: { std: { L: 31.80, a: -0.50, b: -1.40, grain: 6.8 }, smp: { L: 34.60, a: -0.35, b: -0.80, grain: 8.2 } }
   },
+  // 2차 보정 결과물 상태
+  verifyMode: "photo",
+  imgVerify: null,
+  urlVerify: null,
+  verifyPins: [
+    { id: "v-15",  angle: 15,  x: 0.50, y: 0.22 },
+    { id: "v-45",  angle: 45,  x: 0.50, y: 0.50 },
+    { id: "v-105", angle: 105, x: 0.50, y: 0.78 }
+  ],
+  draggingVerifyPin: null,
+  verifyLab: {
+    15:  { L: 68.65, a: -0.32, b: 1.28, grain: 14.5 },
+    45:  { L: 48.45, a: -0.42, b: -0.52, grain: 9.7 },
+    105: { L: 32.05, a: -0.48, b: -1.32, grain: 6.9 }
+  },
+  lastVerifySummary: null,
   recipeKey: "1J7",
   recipeItems: [],
   adjustedItems: [],
@@ -1081,7 +1346,7 @@ function deltaE2000(lab1, lab2) {
 }
 
 /* ============================================================================
-   5. 순수 JS JPEG EXIF 파서 (셔터속도, ISO, 조리개, 화이트밸런스, EV100)
+   5. 순수 JS JPEG EXIF 파서
    ============================================================================ */
 function parseExifFromBuffer(buffer) {
   try {
@@ -1106,7 +1371,7 @@ function parseExifFromBuffer(buffer) {
         offset += segLen;
       }
     }
-  } catch (err) {
+  } catch {
     return null;
   }
   return null;
@@ -1172,7 +1437,7 @@ function readTiffExif(view, tiffStart) {
 }
 
 /* ============================================================================
-   6. 클린 오프스크린 캔버스 분리 (핀/라벨이 픽셀 측색을 오염시키지 않도록 완벽 분리)
+   6. 1차 시편 캔버스 드로잉 & 픽셀 추출
    ============================================================================ */
 const canvas = document.getElementById("photoCanvas");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -1196,10 +1461,8 @@ function drawImageCover(targetCtx, img, x, y, w, h) {
   targetCtx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
 }
 
-// 원본 사진 또는 데모 메탈릭 도장면을 cleanCanvas에 1회 렌더링
 function rebuildCleanSurface() {
   let W = 720, H = 440;
-
   if (state.shotMode === "single" && state.imgSingle) {
     const ratio = state.imgSingle.naturalHeight / state.imgSingle.naturalWidth;
     H = Math.round(Math.max(360, Math.min(920, W * ratio)));
@@ -1212,18 +1475,11 @@ function rebuildCleanSurface() {
   if (state.shotMode === "single" && state.imgSingle) {
     cleanCtx.drawImage(state.imgSingle, 0, 0, W, H);
   } else if (state.shotMode === "dual" && (state.imgStd || state.imgSample)) {
-    if (state.imgStd) {
-      drawImageCover(cleanCtx, state.imgStd, 0, 0, W / 2, H);
-    } else {
-      cleanCtx.fillStyle = "#111827"; cleanCtx.fillRect(0, 0, W / 2, H);
-    }
-    if (state.imgSample) {
-      drawImageCover(cleanCtx, state.imgSample, W / 2, 0, W / 2, H);
-    } else {
-      cleanCtx.fillStyle = "#1e293b"; cleanCtx.fillRect(W / 2, 0, W / 2, H);
-    }
+    if (state.imgStd) drawImageCover(cleanCtx, state.imgStd, 0, 0, W / 2, H);
+    else { cleanCtx.fillStyle = "#111827"; cleanCtx.fillRect(0, 0, W / 2, H); }
+    if (state.imgSample) drawImageCover(cleanCtx, state.imgSample, W / 2, 0, W / 2, H);
+    else { cleanCtx.fillStyle = "#1e293b"; cleanCtx.fillRect(W / 2, 0, W / 2, H); }
   } else {
-    // 결정론적 시드 기반 현실적 메탈릭 도장면 (렉서스 1J7 시편 비교 데모)
     const gStd = cleanCtx.createLinearGradient(0, 0, 0, H);
     gStd.addColorStop(0, "#9ba4aa");
     gStd.addColorStop(0.5, "#747d83");
@@ -1238,7 +1494,6 @@ function rebuildCleanSurface() {
     cleanCtx.fillStyle = gSmp;
     cleanCtx.fillRect(W / 2, 0, W / 2, H);
 
-    // 고정 의사난수로 드래그 시에도 입자감이 흔들리지 않음
     let seed = 4219;
     const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
     for (let i = 0; i < 2800; i++) {
@@ -1255,10 +1510,8 @@ function rebuildCleanSurface() {
 function redrawCanvas() {
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0, 0, W, H);
-  // 1) 깨끗한 도장면 먼저 복사
   ctx.drawImage(cleanCanvas, 0, 0);
 
-  // 2) 데모 모드나 2컷 모드에서만 중앙 경계선 표시 (실제 1컷 사진은 경계 가리지 않음)
   if (state.shotMode === "dual" || !state.imgSingle) {
     ctx.strokeStyle = "rgba(255,255,255,0.45)";
     ctx.lineWidth = 2;
@@ -1273,17 +1526,14 @@ function redrawCanvas() {
     ctx.fillText("Sample (시편/작업면)", W / 2 + 18, 26);
   }
 
-  // 3) 6개 측정 핀 오버레이
   state.pins.forEach(pin => {
     const px = pin.x * W, py = pin.y * H;
     const isStd = pin.group === "std";
-    const color = isStd ? "#38bdf8" : "#10b981";
-
     ctx.strokeStyle = "#ffffff";
     ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.arc(px, py, 14, 0, Math.PI * 2); ctx.stroke();
 
-    ctx.fillStyle = color;
+    ctx.fillStyle = isStd ? "#38bdf8" : "#10b981";
     ctx.beginPath(); ctx.arc(px, py, 11, 0, Math.PI * 2); ctx.fill();
 
     ctx.fillStyle = "#0b0e14";
@@ -1335,7 +1585,7 @@ function handleImageUpload(e, slot) {
     rebuildCleanSurface();
     redrawCanvas();
     extractAllCanvasPoints();
-    showToast("사진 로드 및 측색 추출 완료!");
+    showToast("1차 시편 사진 로드 및 측색 완료!");
   };
   img.onerror = () => {
     URL.revokeObjectURL(objUrl);
@@ -1344,7 +1594,6 @@ function handleImageUpload(e, slot) {
   img.src = objUrl;
 }
 
-// 실시간 WebRTC 가이드 카메라
 async function openLiveCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     showToast("이 브라우저는 실시간 카메라를 지원하지 않습니다. '아이폰 카메라' 버튼을 사용해 주세요.");
@@ -1359,7 +1608,7 @@ async function openLiveCamera() {
     const vid = document.getElementById("liveVideo");
     vid.srcObject = stream;
     document.getElementById("liveCamModal").classList.add("open");
-  } catch (err) {
+  } catch {
     showToast("카메라 권한이 거부되었거나 HTTPS(github.io) 환경이 아닙니다.");
   }
 }
@@ -1407,7 +1656,7 @@ function renderExifPanel() {
 
   panel.style.display = "block";
   if (!e) {
-    grid.innerHTML = `<div class="exif-item" style="grid-column:1 / -1;"><div class="exif-k">메타데이터 상태</div><div class="exif-v">EXIF 미포함 파일 (PNG/스크린샷/편집본) — 1컷 동시 비교 모드로 안전하게 비교하세요.</div></div>`;
+    grid.innerHTML = `<div class="exif-item" style="grid-column:1 / -1;"><div class="exif-k">메타데이터 상태</div><div class="exif-v">EXIF 미포함 파일 — 1컷 동시 비교 모드로 안전하게 비교하세요.</div></div>`;
     warnBox.style.display = "none";
     return;
   }
@@ -1448,10 +1697,39 @@ function loadDemoCanvas() {
   showToast("렉서스 1J7 시편 비교 데모 화면을 불러왔습니다.");
 }
 
+function samplePatchFromCanvas(targetCtx, W, H, normX, normY) {
+  const cx = Math.max(12, Math.min(W - 13, Math.round(normX * W)));
+  const cy = Math.max(12, Math.min(H - 13, Math.round(normY * H)));
+  const imgData = targetCtx.getImageData(cx - 10, cy - 10, 21, 21).data;
+
+  let sumLR = 0, sumLG = 0, sumLB = 0, lums = [];
+  let clippedCount = 0;
+  const n = imgData.length / 4;
+
+  for (let i = 0; i < imgData.length; i += 4) {
+    const r = imgData[i], g = imgData[i + 1], b = imgData[i + 2];
+    if (r >= 252 && g >= 252 && b >= 252) clippedCount++;
+    sumLR += srgbChannelToLinear(r);
+    sumLG += srgbChannelToLinear(g);
+    sumLB += srgbChannelToLinear(b);
+    lums.push(0.2126 * r + 0.7152 * g + 0.0722 * b);
+  }
+
+  const meanLum = lums.reduce((a, b) => a + b, 0) / n;
+  const variance = lums.reduce((acc, v) => acc + Math.pow(v - meanLum, 2), 0) / n;
+  const grain = +Math.sqrt(variance).toFixed(2);
+  return {
+    avgLR: sumLR / n,
+    avgLG: sumLG / n,
+    avgLB: sumLB / n,
+    grain,
+    clippedRatio: clippedCount / n
+  };
+}
+
 function extractAllCanvasPoints() {
   const W = cleanCanvas.width, H = cleanCanvas.height;
 
-  // 2컷 촬영 시 물리 기반 Linear RGB 노출 승수 계산
   let exposureGain = 1.0;
   if (state.shotMode === "dual" && document.getElementById("exifCompCheck")?.checked) {
     if (state.exifStd?.ev100 != null && state.exifSample?.ev100 != null) {
@@ -1461,40 +1739,17 @@ function extractAllCanvasPoints() {
   }
 
   let clipAlerts = [];
-
   state.pins.forEach(pin => {
-    const cx = Math.max(12, Math.min(W - 13, Math.round(pin.x * W)));
-    const cy = Math.max(12, Math.min(H - 13, Math.round(pin.y * H)));
-    const imgData = cleanCtx.getImageData(cx - 10, cy - 10, 21, 21).data;
-
-    let sumLR = 0, sumLG = 0, sumLB = 0, lums = [];
-    let clippedCount = 0;
-    const n = imgData.length / 4;
-
-    for (let i = 0; i < imgData.length; i += 4) {
-      const r = imgData[i], g = imgData[i + 1], b = imgData[i + 2];
-      if (r >= 252 && g >= 252 && b >= 252) clippedCount++;
-      sumLR += srgbChannelToLinear(r);
-      sumLG += srgbChannelToLinear(g);
-      sumLB += srgbChannelToLinear(b);
-      lums.push(0.2126 * r + 0.7152 * g + 0.0722 * b);
+    const patch = samplePatchFromCanvas(cleanCtx, W, H, pin.x, pin.y);
+    if (patch.clippedRatio > 0.25) {
+      clipAlerts.push(`${pin.group === "std" ? "STD" : "시편"} ${pin.angle}° 핀에 빛 반사(화이트 클리핑)가 감지되었습니다.`);
     }
-
-    if (clippedCount / n > 0.25) {
-      clipAlerts.push(`${pin.group === "std" ? "STD" : "시편"} ${pin.angle}° 핀에 빛 반사(화이트 클리핑)가 감지되었습니다. 핀을 반사가 없는 면으로 살짝 옮겨주세요.`);
-    }
-
-    const meanLum = lums.reduce((a, b) => a + b, 0) / n;
-    const variance = lums.reduce((acc, v) => acc + Math.pow(v - meanLum, 2), 0) / n;
-    const grain = +Math.sqrt(variance).toFixed(2);
-
-    let avgLR = sumLR / n, avgLG = sumLG / n, avgLB = sumLB / n;
+    let { avgLR, avgLG, avgLB, grain } = patch;
     if (pin.group === "smp" && exposureGain !== 1.0) {
       avgLR *= exposureGain;
       avgLG *= exposureGain;
       avgLB *= exposureGain;
     }
-
     const lab = linearRgbToLab(avgLR, avgLG, avgLB);
     state.labData[pin.angle][pin.group] = { ...lab, grain };
   });
@@ -1534,9 +1789,9 @@ function resetRoiPins(layout = "lr") {
   extractAllCanvasPoints();
 }
 
-// 터치/마우스 핀 드래그 이벤트 (루페는 cleanCanvas를 확대해 핀 가림 없음)
-function getCanvasRelPos(clientX, clientY) {
-  const rect = canvas.getBoundingClientRect();
+// 1차 캔버스 드래그 핸들러
+function getRelPosOn(el, clientX, clientY) {
+  const rect = el.getBoundingClientRect();
   return {
     x: Math.max(0.03, Math.min(0.97, (clientX - rect.left) / rect.width)),
     y: Math.max(0.04, Math.min(0.96, (clientY - rect.top) / rect.height)),
@@ -1546,7 +1801,7 @@ function getCanvasRelPos(clientX, clientY) {
 }
 
 function startDrag(clientX, clientY) {
-  const pos = getCanvasRelPos(clientX, clientY);
+  const pos = getRelPosOn(canvas, clientX, clientY);
   let best = null, minDist = 0.09;
   state.pins.forEach(p => {
     const d = Math.hypot(p.x - pos.x, p.y - pos.y);
@@ -1560,7 +1815,7 @@ function startDrag(clientX, clientY) {
 
 function moveDrag(clientX, clientY) {
   if (!state.draggingPin) return;
-  const pos = getCanvasRelPos(clientX, clientY);
+  const pos = getRelPosOn(canvas, clientX, clientY);
   state.draggingPin.x = pos.x;
   state.draggingPin.y = pos.y;
   redrawCanvas();
@@ -1584,8 +1839,8 @@ function endDrag() {
 }
 
 canvas.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
-window.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
-window.addEventListener("mouseup", endDrag);
+window.addEventListener("mousemove", e => { moveDrag(e.clientX, e.clientY); moveVerifyDrag(e.clientX, e.clientY); });
+window.addEventListener("mouseup", () => { endDrag(); endVerifyDrag(); });
 
 canvas.addEventListener("touchstart", e => {
   if (e.touches.length) startDrag(e.touches[0].clientX, e.touches[0].clientY);
@@ -1725,7 +1980,7 @@ function applyLabPreset(key) {
 }
 
 /* ============================================================================
-   9. 배합표 관리 & 하이텍 84종 도감 렌더링
+   9. 배합표 관리 · 신너 계산기 · 도감 렌더링
    ============================================================================ */
 function loadRecipePreset(key) {
   state.recipeKey = key;
@@ -1750,17 +2005,25 @@ function renderActiveRecipe() {
   const body = document.getElementById("activeRecipeBody");
   const total = state.recipeItems.reduce((a, b) => a + b.g, 0);
   document.getElementById("targetWeightInput").value = +total.toFixed(2);
+  document.getElementById("thinnerBaseG").value = +total.toFixed(1);
+  calcThinnerMix();
+
+  const isCum = document.getElementById("cumScaleCheck")?.checked;
+  document.getElementById("activeWeightColHeader").textContent = isCum ? "중량 / 누적" : "중량 (g)";
   const safeTotal = total || 1;
+  let running = 0;
 
   body.innerHTML = state.recipeItems.map((it, idx) => {
+    running = +(running + it.g).toFixed(3);
     const info = TONER_MAP[it.code] || { name: "커스텀 토너", swatch: "#64748b", particle: 0, flop: "" };
     const pct = ((it.g / safeTotal) * 100).toFixed(1);
     const pBadge = info.particle > 0 ? ` <span class="mini-tag gold">✨${info.particle}</span>` : "";
+    const cumLine = isCum ? `<div style="font-size:10.5px; color:#38bdf8;">누적 ${running.toFixed(2)}g</div>` : "";
     return `
       <tr>
         <td><span class="swatch-dot" style="background:${info.swatch}; vertical-align:middle; margin-right:5px;"></span><b>${it.code}</b></td>
         <td><div style="font-weight:700;">${info.name}${pBadge}</div><div style="font-size:11px;color:var(--text-dim);">${info.flop}</div></td>
-        <td class="num"><input type="number" step="0.01" min="0" value="${it.g}" style="width:74px; text-align:right; padding:4px 6px;" onchange="updateRecipeItemG(${idx}, this.value)" /></td>
+        <td class="num"><input type="number" step="0.01" min="0" value="${it.g}" style="width:74px; text-align:right; padding:4px 6px;" onchange="updateRecipeItemG(${idx}, this.value)" />${cumLine}</td>
         <td class="num" style="color:var(--text-dim);">${pct}%</td>
         <td><button class="step-btn" onclick="removeRecipeItem(${idx})">×</button></td>
       </tr>
@@ -1796,7 +2059,6 @@ function importRecipeFromText() {
   lines.forEach(line => {
     const clean = line.trim();
     if (!clean) return;
-    // WT317 26.4 / WT 317 : 26.4g / 블랜딩 1051 10 등 인식
     const mWt = clean.match(/WT\s*(\d{3,4})\D+([\d.]+)/i);
     const mBlend = clean.match(/1051\D+([\d.]+)/i);
     if (mWt) {
@@ -1816,6 +2078,21 @@ function importRecipeFromText() {
   state.recipeItems = parsed;
   renderActiveRecipe();
   showToast(`${parsed.length}개 토너 배합표 자동 적용 완료!`);
+}
+
+function calcThinnerMix() {
+  const baseG = Math.max(0, parseFloat(document.getElementById("thinnerBaseG").value) || 0);
+  const ratioPct = parseFloat(document.getElementById("thinnerRatioSelect").value) || 15;
+  const blendPct = parseFloat(document.getElementById("blendAddSelect").value) || 0;
+
+  const thinnerG = +(baseG * (ratioPct / 100)).toFixed(2);
+  const blendG = +(baseG * (blendPct / 100)).toFixed(2);
+  const readyG = +(baseG + thinnerG + blendG).toFixed(2);
+
+  let msg = `👉 베이스 <b>${baseG.toFixed(1)}g</b> + 하이텍 신너(${ratioPct}%) <b>${thinnerG}g</b>`;
+  if (blendG > 0) msg += ` + 블랜딩 1051(${blendPct}%) <b>${blendG}g</b>`;
+  msg += ` = <b>스프레이 총량 ${readyG}g</b>`;
+  document.getElementById("thinnerMixResult").innerHTML = msg;
 }
 
 function calcDilution() {
@@ -1839,27 +2116,30 @@ function renderTonerLibrary() {
   const q = (document.getElementById("tonerSearchInput").value || "").trim().toLowerCase();
   const list = document.getElementById("tonerLibraryList");
   const filtered = TONER_DB.filter(t => {
-    const catOk = state.tonerCat === "ALL" || t.cat === state.tonerCat;
+    const catOk = state.tonerCat === "ALL" || (state.tonerCat === "CUSTOM" ? t.isCustom : t.cat === state.tonerCat);
     const textOk = !q ||
       t.code.toLowerCase().includes(q) ||
       t.code.replace(/\s+/g, "").toLowerCase().includes(q) ||
       t.name.includes(q) ||
-      t.en.toLowerCase().includes(q) ||
+      (t.en && t.en.toLowerCase().includes(q)) ||
       t.desc.toLowerCase().includes(q) ||
       (t.oem && t.oem.toLowerCase().includes(q));
     return catOk && textOk;
   });
 
   if (!filtered.length) {
-    list.innerHTML = `<div style="text-align:center; padding:18px; color:var(--text-muted);">검색 결과가 없습니다.</div>`;
+    list.innerHTML = `<div style="text-align:center; padding:18px; color:var(--text-muted);">해당 조건의 토너가 없습니다.</div>`;
     return;
   }
 
   list.innerHTML = filtered.map(t => {
     const pTag = t.particle > 0 ? `<span class="mini-tag gold">입자 ✨${t.particle}</span>` : "";
     const oemTag = t.oem ? `<span class="mini-tag">OEM: ${t.oem}</span>` : "";
+    const customTag = t.isCustom ? `<span class="mini-tag custom">⭐ 사용자 등록</span>` : "";
     const warnTag = ["WT 1500", "WT 331", "WT 322", "WT 336", "WT 455"].includes(t.code)
       ? `<span class="mini-tag warn">사용규정 확인</span>` : "";
+    const delBtn = t.isCustom
+      ? `<button class="btn btn-sm btn-rose" onclick="deleteCustomToner('${t.code}')">삭제</button>` : "";
     return `
       <div class="toner-card">
         <div class="toner-top">
@@ -1868,10 +2148,14 @@ function renderTonerLibrary() {
             <span>${t.code}</span>
             <span class="toner-name">${t.name}</span>
           </div>
-          <button class="btn btn-sm" onclick="quickAddFromCard('${t.code}')">+ 배합추가</button>
+          <div style="display:flex; gap:4px;">
+            <button class="btn btn-sm" onclick="quickAddFromCard('${t.code}')">+ 배합추가</button>
+            ${delBtn}
+          </div>
         </div>
         <div class="toner-desc">${t.desc}</div>
         <div class="tag-row">
+          ${customTag}
           <span class="mini-tag">${t.cat}</span>
           <span class="mini-tag">은폐력: ${t.hiding}</span>
           <span class="mini-tag">${t.flop}</span>
@@ -1891,7 +2175,7 @@ function quickAddFromCard(code) {
 }
 
 /* ============================================================================
-   10. 실물 라벨 기반 안전 규정 검증기 (조정 시 실시간 재검증)
+   10. 실물 라벨 기반 안전 규정 검증기
    ============================================================================ */
 function evaluateSafetyAlerts(items, finish) {
   const alerts = [];
@@ -1907,22 +2191,22 @@ function evaluateSafetyAlerts(items, finish) {
   if (g1500 > 0) {
     const pct1500 = (g1500 / total) * 100;
     if (hasAluminum && pct1500 > 2.0) {
-      alerts.push(`🚨 [WT 1500 실버 2% 초과 (${pct1500.toFixed(1)}%)] 실물 라벨 규정: 알루미늄 입자에 2% 이상 사용 시 반응으로 변색 및 내구성 문제가 발생합니다! WT 188/388/323으로 대체하세요.`);
+      alerts.push(`🚨 [WT 1500 실버 2% 초과 (${pct1500.toFixed(1)}%)] 알루미늄 입자에 2% 이상 사용 시 반응으로 변색 및 내구성 문제가 발생합니다! WT 188/388/323으로 대체하세요.`);
     } else if (!hasAluminum && pct1500 > 5.0) {
-      alerts.push(`🚨 [WT 1500 5% 초과 (${pct1500.toFixed(1)}%)] 실물 라벨 규정: ${hasPearl ? "펄" : "솔리드"} 컬러에서도 최대 5% 이내로 제한됩니다.`);
+      alerts.push(`🚨 [WT 1500 5% 초과 (${pct1500.toFixed(1)}%)] ${hasPearl ? "펄" : "솔리드"} 컬러에서도 최대 5% 이내로 제한됩니다.`);
     }
   }
   if (getG("WT 331") > 0 && finish === "solid") {
-    alerts.push("🚨 [WT 331 솔리드 금지] 실물 라벨 규정: WT 331(트랜스루센트 옥사이드)은 솔리드 컬러에는 사용을 금합니다.");
+    alerts.push("🚨 [WT 331 솔리드 금지] WT 331(트랜스루센트 옥사이드)은 솔리드 컬러에는 사용을 금합니다.");
   }
   if (getG("WT 322") > 0 && finish === "solid") {
-    alerts.push("⚠️ [WT 322 사용 주의] 실물 라벨 규정: WT 322(마이크로 화이트)는 알루미늄·펄 이펙트 컬러에만 사용합니다. 솔리드는 WT 321을 사용하세요.");
+    alerts.push("⚠️ [WT 322 사용 주의] WT 322(마이크로 화이트)는 알루미늄·펄 이펙트 컬러에만 사용합니다. 솔리드는 WT 321을 사용하세요.");
   }
   if (getG("WT 336") > 0 && finish === "solid") {
-    alerts.push("⚠️ [WT 336 사용 주의] 실물 라벨 규정: WT 336(트랜스루센트 레드)은 이펙트 컬러 전용입니다.");
+    alerts.push("⚠️ [WT 336 사용 주의] WT 336(트랜스루센트 레드)은 이펙트 컬러 전용입니다.");
   }
   if (getG("WT 455") > 0 && finish !== "solid") {
-    alerts.push("⚠️ [WT 455 솔리드 전용] 실물 라벨 규정: WT 455(퍼포먼스 컴포넌트)는 솔리드 컬러에만 사용하는 첨가제입니다.");
+    alerts.push("⚠️ [WT 455 솔리드 전용] WT 455(퍼포먼스 컴포넌트)는 솔리드 컬러에만 사용하는 첨가제입니다.");
   }
   if (finish === "matte") {
     alerts.push("ℹ️ [무광 클리어 판독] 무광 도장은 클리어 광택/건조 조건에 따라 명도가 달라 보이므로 직사광보다 확산광에서 경계를 확인하세요.");
@@ -1939,7 +2223,7 @@ function renderSafetyAlerts() {
 }
 
 /* ============================================================================
-   11. 조색냥이 지능형 조색 보정 엔진 (3각도 플롭 + 실물 84종 로직)
+   11. 조색냥이 1차 조색 보정 엔진
    ============================================================================ */
 function runFullAnalysis(shouldSwitchTab = true) {
   if (!state.recipeItems.length) {
@@ -1952,7 +2236,6 @@ function runFullAnalysis(shouldSwitchTab = true) {
   const s45 = state.labData[45].smp, r45 = state.labData[45].std;
   const s105 = state.labData[105].smp, r105 = state.labData[105].std;
 
-  // 시편 - 기준 편차
   const dL15 = +(s15.L - r15.L).toFixed(2);
   const dL45 = +(s45.L - r45.L).toFixed(2);
   const dL105 = +(s105.L - r105.L).toFixed(2);
@@ -1979,9 +2262,7 @@ function runFullAnalysis(shouldSwitchTab = true) {
   } else {
     let headlineParts = [];
 
-    // 1. 3각도 플롭(15° vs 110°) 및 명도(L*) 분석
     if (finish === "effect" && dL105 < -0.6 && dL15 >= -0.3) {
-      // 정면은 괜찮거나 밝은데 측면(110°)만 어두움 -> WT 386 Flop Control
       headlineParts.push("측면(110°) 어두움 → WT 386 플롭 보정");
       const addFlop = +(Math.min(0.6, Math.max(0.15, Math.abs(dL105) * 0.12))).toFixed(3);
       if (!adjMap["WT 386"]) adjMap["WT 386"] = { code: "WT 386", orig: 0, next: 0, reason: "" };
@@ -2005,10 +2286,9 @@ function runFullAnalysis(shouldSwitchTab = true) {
         const sharePct = ((whiteItem.orig / colorantOrig) * 100).toFixed(1);
         reasons.push({
           title: `1. ${whiteItem.code} (${TONER_MAP[whiteItem.code]?.name}) -${(cutRatio * 100).toFixed(1)}% 감량`,
-          body: `${whiteItem.code}은 조색제의 <b>${sharePct}%</b>를 차지하는 주력 백색입니다. 감량하면 백색 산란 기여가 줄어 작업면 명도가 자연스럽게 내려갑니다. 단, 블랙 증량과 달리 백색 감량은 <b>은폐력</b>에도 영향을 주므로 도막 두께와 도장 횟수를 함께 관리해야 합니다.`
+          body: `${whiteItem.code}은 조색제의 <b>${sharePct}%</b>를 차지하는 주력 백색입니다. 감량하면 백색 산란 기여가 줄어 작업면 명도가 내려갑니다. 단, 블랙 증량과 달리 백색 감량은 <b>은폐력</b>에도 영향을 주므로 도막 두께와 도장 횟수를 함께 관리해야 합니다.`
         });
       } else if (fineAl && coarseAl && dL105 > 0.5 && dGrain > 1.0) {
-        // 버그 수정 완료: fineAl.g / coarseAl.g 정확히 참조!
         const fineOrig = adjMap[fineAl.code].orig;
         const coarseOrig = adjMap[coarseAl.code].orig;
         const cutFine = +(fineOrig * 0.07).toFixed(3);
@@ -2051,7 +2331,6 @@ function runFullAnalysis(shouldSwitchTab = true) {
       });
     }
 
-    // 2. b* 축 보정 (+황 / -청)
     if (db45 > 0.35) {
       headlineParts.push("황색기 과다 → 쿨톤 보정");
       const yelInRecipe = state.recipeItems.find(it => ["WT 329","WT 326","WT 327","WT 328","WT 324","WT 393"].includes(it.code) && it.g > 0.1);
@@ -2087,7 +2366,6 @@ function runFullAnalysis(shouldSwitchTab = true) {
       });
     }
 
-    // 3. a* 축 보정 (+적 / -녹)
     if (Math.abs(da45) > 0.35) {
       if (da45 > 0.35) {
         const gCode = finish === "effect" ? "WT 345" : "WT 347";
@@ -2151,6 +2429,19 @@ function runFullAnalysis(shouldSwitchTab = true) {
     <div>TOP1 수정안: <span style="color:#38bdf8;">${topSummary}</span></div>
   `;
 
+  // 도장부스 스프레이 조건 실무 가이드
+  let boothTip = "";
+  if (finish === "solid") {
+    boothTip = "🏭 <b>도장부스 스프레이 팁 (솔리드):</b> 1.8~2.0 bar 표준 압력으로 2~2.5코트 균일 웨트 분사하세요. 동절기 저습도 시 WT 455(10%) 혼합 시 외관 평활도가 개선됩니다.";
+  } else if (dL105 > 0.5) {
+    boothTip = "🏭 <b>도장부스 스프레이 팁 (측면 밝음 억제):</b> 시편 측면(110°)이 뜰 때는 마지막 코트를 너무 건조하게(드롭코트 과다) 뿌리지 말고, 표준 건거리(15~18cm)로 <b>살짝 웨트하게 눕혀 뿌려</b> 알루미늄 입자를 평평하게 배열시키세요.";
+  } else if (dL105 < -0.5) {
+    boothTip = "🏭 <b>도장부스 스프레이 팁 (측면 어두움 개선):</b> 측면이 어두울 때는 2코트 후 플래시오프(완전 무광 건조)를 충분히 주고, 건거리를 20~25cm로 띄워 <b>1.4~1.6 bar 컨트롤(드롭) 코트 1회</b>를 가볍게 얹으면 측면 명도가 살아납니다.";
+  } else {
+    boothTip = "🏭 <b>도장부스 스프레이 팁 (이펙트 표준):</b> 1.5코트(웨트 1회 + 컨트롤 0.5회) 후 완전 플래시오프 건조를 지키세요. 클리어 도포 전 시편과 실차의 110° 측면 각도를 확산광에서 최종 대조하세요.";
+  }
+  document.getElementById("boothSprayGuide").innerHTML = boothTip;
+
   const toneText = Math.abs(dL45) < 0.4 && Math.abs(db45) < 0.35
     ? "시편과 차체 도장면의 전체적인 명도 및 색상 톤 연결이 전반적으로 양호합니다."
     : `시편은 차체 대비 전반적으로 <b>${dL45 > 0 ? "더 밝고" : "더 어둡고"}</b>, <b>${db45 > 0 ? "노란 기운(웜톤)" : "푸른 기운(쿨톤)"}</b>이 미세하게 더 섞여 보입니다.`;
@@ -2164,7 +2455,7 @@ function runFullAnalysis(shouldSwitchTab = true) {
   document.getElementById("comparisonNarrative").innerHTML = `
     <div style="margin-bottom:8px;"><b>1. 색상 톤(컬러 톤) 비교</b><br>${toneText}</div>
     <div style="margin-bottom:8px;"><b>2. 메탈릭 입자(펄, 알루미늄 플롭) 차이</b><br>${grainText}</div>
-    <div><b>3. 조색냥이 Engineer Action</b><br>${isHold ? "현재 시편 상태로 실제 보수도장을 진행해도 판넬 경계 이색 리스크가 낮습니다." : "위 수정 레스피대로 시편을 1회 재분사한 뒤, 직사광이 아닌 균일한 확산광(부스 LED/그늘)에서 정면·측면 경계를 최종 확인하세요."}</div>
+    <div><b>3. 조색냥이 Engineer Action</b><br>${isHold ? "현재 시편 상태로 실제 보수도장을 진행해도 판넬 경계 이색 리스크가 낮습니다." : "위 수정 레스피대로 배합 후 2차 시편을 분사하시고, 바로 아래 <b>⑤ 2차 보정 결과물 완성도 검증</b>에 올려 합격 여부를 확인하세요."}</div>
   `;
 
   if (shouldSwitchTab) {
@@ -2175,11 +2466,15 @@ function runFullAnalysis(shouldSwitchTab = true) {
 
 function renderAdjustedRecipeTable() {
   const body = document.getElementById("adjustedRecipeBody");
-  let origSum = 0, nextSum = 0, resinOrig = 0, resinNext = 0;
+  const isCum = document.getElementById("cumScaleCheck")?.checked;
+  document.getElementById("adjWeightColHeader").textContent = isCum ? "수정 / 누적" : "수정안";
+
+  let origSum = 0, nextSum = 0, resinOrig = 0, resinNext = 0, runningNext = 0;
 
   body.innerHTML = state.adjustedItems.map((it, idx) => {
     origSum += it.orig;
     nextSum += it.next;
+    runningNext = +(runningNext + it.next).toFixed(3);
     if (it.code === "WT 385" || it.code === "WT 387") {
       resinOrig += it.orig;
       resinNext += it.next;
@@ -2187,11 +2482,12 @@ function renderAdjustedRecipeTable() {
     const diff = +(it.next - it.orig).toFixed(3);
     const diffStr = diff === 0 ? "유지" : `${diff > 0 ? "+" : ""}${diff.toFixed(3)} g`;
     const cls = diff === 0 ? "" : (diff > 0 ? "pos" : "neg");
+    const cumTag = isCum ? `<div style="font-size:10.5px; color:#38bdf8;">누적 ${runningNext.toFixed(2)}g</div>` : "";
     return `
       <tr>
         <td><b>${it.code}</b><div style="font-size:11px;color:var(--text-dim);">${TONER_MAP[it.code]?.name || ""}</div></td>
         <td class="num">${it.orig.toFixed(3)} g</td>
-        <td class="num" style="color:#fff;">${it.next.toFixed(3)} g</td>
+        <td class="num" style="color:#fff;">${it.next.toFixed(3)} g${cumTag}</td>
         <td class="num">
           <div class="${cls}" style="margin-bottom:3px;">${diffStr}</div>
           <div class="step-adj">
@@ -2257,20 +2553,310 @@ function fallbackCopyText(text) {
   ta.style.opacity = "0";
   document.body.appendChild(ta);
   ta.select();
-  try {
-    document.execCommand("copy");
-    showToast("수정 레스피가 복사되었습니다!");
-  } catch {
-    showToast("복사에 실패했습니다. 수동으로 확인해 주세요.");
-  }
+  try { document.execCommand("copy"); showToast("수정 레스피가 복사되었습니다!"); }
+  catch { showToast("복사에 실패했습니다."); }
   document.body.removeChild(ta);
 }
 
 /* ============================================================================
-   12. 작업 이력 저장 / 불러오기 / JSON 백업
+   12. Beta v3.0 신규: 2차 보정 시편(결과물) 업로드 & 완성도 검증 엔진
    ============================================================================ */
-const STORAGE_KEY = "josaek_nyangi_history_v2";
+const vCanvas = document.getElementById("verifyCanvas");
+const vCtx = vCanvas.getContext("2d", { willReadFrequently: true });
+const vCleanCanvas = document.createElement("canvas");
+const vCleanCtx = vCleanCanvas.getContext("2d", { willReadFrequently: true });
+const vLoupe = document.getElementById("verifyLoupe");
+const vLoupeCanvas = document.getElementById("verifyLoupeCanvas");
+const vLctx = vLoupeCanvas.getContext("2d");
 
+function switchVerifyInputMode(mode) {
+  state.verifyMode = mode;
+  document.getElementById("vModePhotoBtn").classList.toggle("active", mode === "photo");
+  document.getElementById("vModeLabBtn").classList.toggle("active", mode === "lab");
+  document.getElementById("verifyPhotoBox").style.display = mode === "photo" ? "block" : "none";
+  document.getElementById("verifyLabBox").style.display = mode === "lab" ? "block" : "none";
+  if (mode === "lab") renderVerifyLabInputs();
+}
+
+function renderVerifyLabInputs() {
+  const body = document.getElementById("verifyLabInputBody");
+  body.innerHTML = [15, 45, 105].map(ang => {
+    const d = state.verifyLab[ang];
+    const lbl = ang === 105 ? "110°(측면)" : `${ang}°`;
+    return `
+      <tr>
+        <td><b>${lbl}</b></td>
+        <td><input type="number" step="0.01" id="vin-${ang}-L" value="${d.L}" /></td>
+        <td><input type="number" step="0.01" id="vin-${ang}-a" value="${d.a}" /></td>
+        <td><input type="number" step="0.01" id="vin-${ang}-b" value="${d.b}" /></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function handleVerifyImageUpload(e) {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+
+  const objUrl = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    if (state.urlVerify) URL.revokeObjectURL(state.urlVerify);
+    state.urlVerify = objUrl;
+    state.imgVerify = img;
+    document.getElementById("verifyCanvasContainer").style.display = "block";
+    rebuildVerifySurface();
+    redrawVerifyCanvas();
+    extractVerifyCanvasPoints();
+    evaluateSecondSprayOut();
+    showToast("2차 보정 시편 사진이 로드되었습니다!");
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(objUrl);
+    showToast("이미지를 불러올 수 없습니다.");
+  };
+  img.src = objUrl;
+}
+
+function loadVerifyDemo() {
+  state.imgVerify = null;
+  document.getElementById("verifyCanvasContainer").style.display = "block";
+  rebuildVerifySurface();
+  redrawVerifyCanvas();
+  extractVerifyCanvasPoints();
+  evaluateSecondSprayOut();
+  showToast("2차 보정 성공 시편 샘플을 적용했습니다.");
+}
+
+function rebuildVerifySurface() {
+  let W = 720, H = 360;
+  if (state.imgVerify) {
+    const ratio = state.imgVerify.naturalHeight / state.imgVerify.naturalWidth;
+    H = Math.round(Math.max(300, Math.min(820, W * ratio)));
+  }
+  vCanvas.width = W; vCanvas.height = H;
+  vCleanCanvas.width = W; vCleanCanvas.height = H;
+  vCleanCtx.clearRect(0, 0, W, H);
+
+  if (state.imgVerify) {
+    vCleanCtx.drawImage(state.imgVerify, 0, 0, W, H);
+  } else {
+    // 1차 STD 원색에 거의 수렴한 2차 보정 시편 시뮬레이션
+    const std15 = state.labData[15].std;
+    const std45 = state.labData[45].std;
+    const std105 = state.labData[105].std;
+    const g = vCleanCtx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, labToHex(std15.L + 0.25, std15.a + 0.03, std15.b + 0.08));
+    g.addColorStop(0.5, labToHex(std45.L + 0.22, std45.a + 0.03, std45.b + 0.08));
+    g.addColorStop(1, labToHex(std105.L + 0.25, std105.a + 0.02, std105.b + 0.07));
+    vCleanCtx.fillStyle = g;
+    vCleanCtx.fillRect(0, 0, W, H);
+
+    let seed = 8821;
+    const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    for (let i = 0; i < 2000; i++) {
+      vCleanCtx.fillStyle = "rgba(245,250,255,0.17)";
+      vCleanCtx.fillRect(rand() * W, rand() * H, 1.4, 1.4);
+    }
+  }
+}
+
+function redrawVerifyCanvas() {
+  const W = vCanvas.width, H = vCanvas.height;
+  vCtx.clearRect(0, 0, W, H);
+  vCtx.drawImage(vCleanCanvas, 0, 0);
+
+  vCtx.fillStyle = "rgba(11,14,20,0.75)";
+  vCtx.fillRect(10, 10, 185, 24);
+  vCtx.fillStyle = "#34d399";
+  vCtx.font = "bold 11.5px sans-serif";
+  vCtx.fillText("2차 보정 시편 (결과물 측정)", 18, 26);
+
+  state.verifyPins.forEach(pin => {
+    const px = pin.x * W, py = pin.y * H;
+    vCtx.strokeStyle = "#ffffff";
+    vCtx.lineWidth = 2.5;
+    vCtx.beginPath(); vCtx.arc(px, py, 14, 0, Math.PI * 2); vCtx.stroke();
+
+    vCtx.fillStyle = "#10b981";
+    vCtx.beginPath(); vCtx.arc(px, py, 11, 0, Math.PI * 2); vCtx.fill();
+
+    vCtx.fillStyle = "#0b0e14";
+    vCtx.font = "bold 10px sans-serif";
+    vCtx.textAlign = "center";
+    vCtx.fillText(`${pin.angle}°`, px, py + 3.5);
+    vCtx.textAlign = "left";
+  });
+}
+
+function extractVerifyCanvasPoints() {
+  const W = vCleanCanvas.width, H = vCleanCanvas.height;
+  state.verifyPins.forEach(pin => {
+    const patch = samplePatchFromCanvas(vCleanCtx, W, H, pin.x, pin.y);
+    const lab = linearRgbToLab(patch.avgLR, patch.avgLG, patch.avgLB);
+    state.verifyLab[pin.angle] = { ...lab, grain: patch.grain };
+  });
+}
+
+function startVerifyDrag(clientX, clientY) {
+  const pos = getRelPosOn(vCanvas, clientX, clientY);
+  let best = null, minDist = 0.095;
+  state.verifyPins.forEach(p => {
+    const d = Math.hypot(p.x - pos.x, p.y - pos.y);
+    if (d < minDist) { minDist = d; best = p; }
+  });
+  if (best) {
+    state.draggingVerifyPin = best;
+    moveVerifyDrag(clientX, clientY);
+  }
+}
+
+function moveVerifyDrag(clientX, clientY) {
+  if (!state.draggingVerifyPin) return;
+  const pos = getRelPosOn(vCanvas, clientX, clientY);
+  state.draggingVerifyPin.x = pos.x;
+  state.draggingVerifyPin.y = pos.y;
+  redrawVerifyCanvas();
+
+  vLoupe.style.display = "block";
+  const lx = Math.max(8, Math.min(vCanvas.clientWidth - 112, pos.px - 52));
+  const ly = pos.py > 120 ? pos.py - 118 : pos.py + 24;
+  vLoupe.style.left = `${lx}px`;
+  vLoupe.style.top = `${ly}px`;
+  vLctx.clearRect(0, 0, 104, 104);
+  const srcX = Math.max(0, Math.min(vCleanCanvas.width - 48, pos.x * vCleanCanvas.width - 24));
+  const srcY = Math.max(0, Math.min(vCleanCanvas.height - 48, pos.y * vCleanCanvas.height - 24));
+  vLctx.drawImage(vCleanCanvas, srcX, srcY, 48, 48, 0, 0, 104, 104);
+}
+
+function endVerifyDrag() {
+  if (!state.draggingVerifyPin) return;
+  state.draggingVerifyPin = null;
+  vLoupe.style.display = "none";
+  extractVerifyCanvasPoints();
+  evaluateSecondSprayOut();
+}
+
+vCanvas.addEventListener("mousedown", e => startVerifyDrag(e.clientX, e.clientY));
+vCanvas.addEventListener("touchstart", e => {
+  if (e.touches.length) startVerifyDrag(e.touches[0].clientX, e.touches[0].clientY);
+}, { passive: true });
+vCanvas.addEventListener("touchmove", e => {
+  if (state.draggingVerifyPin && e.touches.length) {
+    e.preventDefault();
+    moveVerifyDrag(e.touches[0].clientX, e.touches[0].clientY);
+  }
+}, { passive: false });
+vCanvas.addEventListener("touchend", endVerifyDrag);
+
+function evaluateSecondSprayOut() {
+  if (state.verifyMode === "lab") {
+    [15, 45, 105].forEach(ang => {
+      state.verifyLab[ang].L = parseFloat(document.getElementById(`vin-${ang}-L`)?.value) || 0;
+      state.verifyLab[ang].a = parseFloat(document.getElementById(`vin-${ang}-a`)?.value) || 0;
+      state.verifyLab[ang].b = parseFloat(document.getElementById(`vin-${ang}-b`)?.value) || 0;
+    });
+  } else if (document.getElementById("verifyCanvasContainer").style.display !== "none") {
+    extractVerifyCanvasPoints();
+  }
+
+  const std45 = state.labData[45].std;
+  const smp45 = state.labData[45].smp;
+  const ver45 = state.verifyLab[45];
+
+  const std105 = state.labData[105].std;
+  const smp105 = state.labData[105].smp;
+  const ver105 = state.verifyLab[105];
+
+  const deBefore = deltaE2000(std45, smp45);
+  const deAfter = deltaE2000(std45, ver45);
+  const improvePct = deBefore > 0.05 ? Math.round(((deBefore - deAfter) / deBefore) * 100) : 0;
+
+  // 1차 편차 vs 2차 편차
+  const dL1 = +(smp45.L - std45.L).toFixed(2), dL2 = +(ver45.L - std45.L).toFixed(2);
+  const da1 = +(smp45.a - std45.a).toFixed(2), da2 = +(ver45.a - std45.a).toFixed(2);
+  const db1 = +(smp45.b - std45.b).toFixed(2), db2 = +(ver45.b - std45.b).toFixed(2);
+  const dFlop1 = +(smp105.L - std105.L).toFixed(2), dFlop2 = +(ver105.L - std105.L).toFixed(2);
+
+  // 과보정(부호 반전 + 오차 잔존) 탐지
+  const isOvershot = (dL1 * dL2 < 0 && Math.abs(dL2) > 0.55) || (db1 * db2 < 0 && Math.abs(db2) > 0.45);
+
+  let gradeText = "", gradeStyle = "", feedbackHtml = "";
+  if (isOvershot) {
+    gradeText = "C등급 · 과보정 주의 (방향 반전)";
+    gradeStyle = "background:var(--rose-dim); color:#fda4af; border:1px solid var(--rose);";
+    feedbackHtml = `⚠️ <b>과보정(Overshoot) 감지:</b> 1차 편차와 반대 방향으로 넘어갔습니다. (예: 명도 ΔL* ${dL1 >= 0 ? "+" : ""}${dL1} → <b>${dL2 >= 0 ? "+" : ""}${dL2}</b>, 황/청 Δb* ${db1 >= 0 ? "+" : ""}${db1} → <b>${db2 >= 0 ? "+" : ""}${db2}</b>).<br>👉 <b>해결책:</b> 원배합(또는 반대 보정 토너)을 소량 역투입하거나, 클리어 도포 전 스프레이 건조/압력 조건이 1차 때와 달라졌는지 확인하세요.`;
+  } else if (deAfter <= 0.55 && Math.abs(dFlop2) <= 0.65) {
+    gradeText = "S등급 · 실차 도장 합격 (OK)";
+    gradeStyle = "background:var(--emerald-dim); color:#6ee7b7; border:1px solid var(--emerald);";
+    feedbackHtml = `🏆 <b>완성도 최상 (45° ΔE00 = ${deAfter}, 측면 ΔL* = ${dFlop2 >= 0 ? "+" : ""}${dFlop2}):</b> 차체 원색과의 색차 및 측면 플롭이 육안 허용 오차 이내로 완벽히 수렴했습니다. 인접 판넬 맞대기(Butt-match) 또는 실차 도장을 바로 진행하셔도 좋습니다.`;
+  } else if (deAfter <= 1.05 && Math.abs(dFlop2) <= 1.15) {
+    gradeText = "A등급 · 블렌딩(보카시) 도장 합격";
+    gradeStyle = "background:var(--primary-dim); color:#7dd3fc; border:1px solid var(--primary);";
+    feedbackHtml = `✅ <b>양호한 수렴 (45° ΔE00 = ${deAfter}):</b> 원색에 근접하게 보정되었습니다. 맞대기 도장 시 미세한 경계가 보일 수 있으므로 인접 판넬에 <b>블랜딩 1051</b>을 활용한 보카시(Fade-out) 기법으로 마무리하면 완벽합니다.`;
+  } else {
+    gradeText = "B등급 · 미세 추가 보정 권장";
+    gradeStyle = "background:var(--amber-dim); color:#fcd34d; border:1px solid var(--amber);";
+    const remBlk = dL2 > 0.5 ? `WT 323 +${Math.min(0.4, Math.abs(dL2) * 0.15).toFixed(2)}g` : (dL2 < -0.5 ? `WT 322 +${Math.min(0.4, Math.abs(dL2) * 0.15).toFixed(2)}g` : "");
+    const remTone = db2 > 0.4 ? `WT 339 +${Math.min(0.15, Math.abs(db2) * 0.1).toFixed(2)}g` : (db2 < -0.4 ? `WT 329 +${Math.min(0.15, Math.abs(db2) * 0.1).toFixed(2)}g` : "");
+    const extraFix = [remBlk, remTone].filter(Boolean).join(", ") || "스프레이 압력/도막 두께 재확인";
+    feedbackHtml = `🔧 <b>방향은 맞았으나 보정량이 조금 부족합니다 (ΔE00: ${deBefore} → ${deAfter}):</b><br>👉 <b>2차 미세 추가 처방 (100g 기준):</b> <b>${extraFix}</b> 투입 후 1회 확인하세요.`;
+  }
+
+  document.getElementById("verifyResultPanel").style.display = "block";
+  const badge = document.getElementById("verifyGradeBadge");
+  badge.textContent = gradeText;
+  badge.style.cssText = gradeStyle;
+
+  document.getElementById("verifyDeImprovement").textContent =
+    `45° ΔE00: ${deBefore} → ${deAfter} (${improvePct >= 0 ? improvePct + "% 개선" : Math.abs(improvePct) + "% 증가"})`;
+
+  // 3단 색상칩 비교
+  const cStd = labToHex(std45.L, std45.a, std45.b);
+  const c1 = labToHex(smp45.L, smp45.a, smp45.b);
+  const c2 = labToHex(ver45.L, ver45.a, ver45.b);
+  document.getElementById("verifySwatchCompare").innerHTML = `
+    <div class="verify-swatch-box" style="background:${cStd}; color:${std45.L > 56 ? '#0f172a' : '#fff'};">
+      STD 차체 원색<br><span style="font-size:10px;opacity:0.85;">L* ${std45.L.toFixed(1)}</span>
+    </div>
+    <div class="verify-swatch-box" style="background:${c1}; color:${smp45.L > 56 ? '#0f172a' : '#fff'};">
+      1차 시편 (Before)<br><span style="font-size:10px;opacity:0.85;">ΔE ${deBefore}</span>
+    </div>
+    <div class="verify-swatch-box" style="background:${c2}; color:${ver45.L > 56 ? '#0f172a' : '#fff'};">
+      2차 결과물 (After)<br><span style="font-size:10px;opacity:0.85;">ΔE ${deAfter}</span>
+    </div>
+  `;
+
+  const axisRows = [
+    { label: "L* 명도 (45°)", b: dL1, a: dL2, tol: 0.5 },
+    { label: "a* 적/녹 (45°)", b: da1, a: da2, tol: 0.35 },
+    { label: "b* 황/청 (45°)", b: db1, a: db2, tol: 0.35 },
+    { label: "110° 측면 플롭", b: dFlop1, a: dFlop2, tol: 0.65 }
+  ];
+  document.getElementById("verifyAxisTableBody").innerHTML = axisRows.map(r => {
+    const ok = Math.abs(r.a) <= r.tol;
+    const status = ok ? '<span class="ok">✔ 합격</span>' : (Math.abs(r.a) < Math.abs(r.b) ? '<span class="pos">▲ 개선중</span>' : '<span class="warn">⚠ 재확인</span>');
+    return `
+      <tr>
+        <td><b>${r.label}</b></td>
+        <td class="num" style="color:var(--text-dim);">${r.b >= 0 ? "+" : ""}${r.b}</td>
+        <td class="num ${ok ? "ok" : "pos"}">${r.a >= 0 ? "+" : ""}${r.a}</td>
+        <td class="num">${status}</td>
+      </tr>
+    `;
+  }).join("");
+
+  const fbBox = document.getElementById("verifyFeedbackText");
+  fbBox.className = "alert-box " + (isOvershot ? "alert-rose" : (deAfter <= 1.05 ? "alert-emerald" : "alert-amber"));
+  fbBox.innerHTML = feedbackHtml;
+
+  state.lastVerifySummary = { deBefore, deAfter, gradeText };
+}
+
+/* ============================================================================
+   13. 작업 이력 저장 / 불러오기 / 통합 JSON 백업 (이력 + 커스텀 토너)
+   ============================================================================ */
 function saveCurrentCase() {
   const title = document.getElementById("saveCaseTitle").value.trim() || RECIPE_PRESETS[state.recipeKey]?.title || "무제 작업";
   const de45 = deltaE2000(state.labData[45].std, state.labData[45].smp);
@@ -2279,9 +2865,11 @@ function saveCurrentCase() {
     date: new Date().toLocaleString("ko-KR"),
     title,
     de45,
+    verifySummary: state.lastVerifySummary,
     recipeKey: state.recipeKey,
     finish: document.getElementById("finishTypeSelect").value,
     labData: JSON.parse(JSON.stringify(state.labData)),
+    verifyLab: JSON.parse(JSON.stringify(state.verifyLab)),
     recipeItems: JSON.parse(JSON.stringify(state.recipeItems)),
     adjustedItems: JSON.parse(JSON.stringify(state.adjustedItems))
   };
@@ -2290,7 +2878,7 @@ function saveCurrentCase() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   document.getElementById("saveCaseTitle").value = "";
   renderHistoryList();
-  showToast("작업 이력이 브라우저에 저장되었습니다!");
+  showToast("작업 이력이 저장되었습니다!");
 }
 
 function renderHistoryList() {
@@ -2300,20 +2888,26 @@ function renderHistoryList() {
     container.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-muted);">아직 저장된 조색 이력이 없습니다.</div>`;
     return;
   }
-  container.innerHTML = list.map(item => `
-    <div class="toner-card">
-      <div class="toner-top">
-        <div>
-          <div style="font-weight:800; font-size:14px;">${item.title}</div>
-          <div style="font-size:11px; color:var(--text-dim);">${item.date} · 45° ΔE00: ${item.de45}</div>
+  container.innerHTML = list.map(item => {
+    const vBadge = item.verifySummary
+      ? `<span class="mini-tag" style="background:var(--emerald-dim);color:#6ee7b7;">2차검증: ${item.verifySummary.gradeText} (ΔE ${item.verifySummary.deAfter})</span>`
+      : "";
+    return `
+      <div class="toner-card">
+        <div class="toner-top">
+          <div>
+            <div style="font-weight:800; font-size:14px;">${item.title}</div>
+            <div style="font-size:11px; color:var(--text-dim);">${item.date} · 1차 45° ΔE00: ${item.de45}</div>
+          </div>
+          <div style="display:flex; gap:5px;">
+            <button class="btn btn-sm btn-primary" onclick="loadHistoryCase(${item.id})">불러오기</button>
+            <button class="btn btn-sm btn-rose" onclick="deleteHistoryCase(${item.id})">삭제</button>
+          </div>
         </div>
-        <div style="display:flex; gap:5px;">
-          <button class="btn btn-sm btn-primary" onclick="loadHistoryCase(${item.id})">불러오기</button>
-          <button class="btn btn-sm btn-rose" onclick="deleteHistoryCase(${item.id})">삭제</button>
-        </div>
+        ${vBadge ? `<div class="tag-row">${vBadge}</div>` : ""}
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 function loadHistoryCase(id) {
@@ -2321,6 +2915,7 @@ function loadHistoryCase(id) {
   const item = list.find(x => x.id === id);
   if (!item) return;
   state.labData = item.labData;
+  if (item.verifyLab) state.verifyLab = item.verifyLab;
   if (item.recipeKey && RECIPE_PRESETS[item.recipeKey]) {
     state.recipeKey = item.recipeKey;
     document.getElementById("recipePresetSelect").value = item.recipeKey;
@@ -2332,7 +2927,9 @@ function loadHistoryCase(id) {
   renderActiveRecipe();
   updateZoneStripAndDelta();
   renderLabInputs();
+  renderVerifyLabInputs();
   runFullAnalysis(true);
+  if (item.verifySummary) evaluateSecondSprayOut();
   showToast("저장된 작업 데이터를 불러왔습니다.");
 }
 
@@ -2344,12 +2941,17 @@ function deleteHistoryCase(id) {
 }
 
 function exportHistoryJson() {
-  const data = localStorage.getItem(STORAGE_KEY) || "[]";
-  const blob = new Blob([data], { type: "application/json" });
+  const bundle = {
+    version: "3.0",
+    exportedAt: new Date().toISOString(),
+    history: JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"),
+    customToners: customToners
+  };
+  const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `조색냥이_이력백업_${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `조색냥이_v3_통합백업_${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
@@ -2364,16 +2966,23 @@ function importHistoryJson(e) {
       const parsed = JSON.parse(ev.target.result);
       if (Array.isArray(parsed)) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-        renderHistoryList();
-        showToast("이력 JSON 복원 완료!");
+      } else if (parsed && typeof parsed === "object") {
+        if (Array.isArray(parsed.history)) localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed.history));
+        if (Array.isArray(parsed.customToners)) {
+          localStorage.setItem(CUSTOM_TONER_KEY, JSON.stringify(parsed.customToners));
+          rebuildTonerDatabase();
+          renderTonerLibrary();
+        }
       }
+      renderHistoryList();
+      showToast("통합 JSON 백업 복원 완료!");
     } catch { showToast("올바른 JSON 백업 파일이 아닙니다."); }
   };
   r.readAsText(file);
 }
 
 /* ============================================================================
-   13. 탭 전환 & 초기화
+   14. 탭 전환 & 초기화
    ============================================================================ */
 function switchTab(tabId, btnEl) {
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
@@ -2392,17 +3001,19 @@ function showToast(msg) {
 }
 
 (function init() {
-  document.getElementById("headerCountBadge").textContent = `Hi-TEC ${TONER_DB.length}종`;
-  document.getElementById("dbCountSpan").textContent = TONER_DB.length;
-  document.querySelector("#tonerCatChips .chip").textContent = `전체 (${TONER_DB.length})`;
+  // iOS 홈화면 PWA 실행 감지 -> 상단 상태바/다이나믹 아일랜드 여백 확보
+  const isStandalone = window.navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  if (isStandalone && isIOS) {
+    document.body.classList.add("ios-standalone");
+  }
 
-  const sel = document.getElementById("quickAddTonerSelect");
-  sel.innerHTML = TONER_DB.map(t => `<option value="${t.code}">${t.code} - ${t.name}</option>`).join("");
-
+  rebuildTonerDatabase();
   loadRecipePreset("1J7");
   calcDilution();
   renderTonerLibrary();
   renderLabInputs();
+  renderVerifyLabInputs();
   rebuildCleanSurface();
   redrawCanvas();
   extractAllCanvasPoints();
